@@ -6,18 +6,32 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.fragment.app.FragmentTransaction
+import edu.utap.colorexercises.ui.HomeFragment
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var homeFragment: HomeFragment
+
+    private fun initHomeFragment() {
+        supportFragmentManager
+            .beginTransaction()
+            // No back stack for home
+            .add(R.id.main_frame, homeFragment,"homeFragment")
+            .addToBackStack(null)
+            // TRANSIT_FRAGMENT_FADE calls for the Fragment to fade away
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            .commit()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
+        homeFragment = HomeFragment.newInstance()
+        initHomeFragment()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

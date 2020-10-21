@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:background="@drawable/ic_baseline_brightness_1_100"
+        android:id="@+id/btn_exercises"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Match!"
+        android:textSize="30sp"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btn_myPalettes"/>
+
+    <Button
+        android:background="@drawable/ic_baseline_brightness_2_100"
+        android:id="@+id/btn_myPalettes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My\n Palettes"
+        android:textSize="30sp"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_exercises"
+        app:layout_constraintBottom_toTopOf="@+id/btn_browsePalettes"/>
+
+    <Button
+        android:background="@drawable/ic_baseline_brightness_3_100"
+        android:id="@+id/btn_browsePalettes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Browse\n Palettes"
+        android:textSize="30sp"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_myPalettes"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
