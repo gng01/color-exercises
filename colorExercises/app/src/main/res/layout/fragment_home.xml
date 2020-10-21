@@ -8,8 +8,8 @@
     <TextView
         android:id="@+id/txt_intro"
         android:text="Select one of the following options to get started: "
-        android:textSize="20sp"
-        android:layout_margin="20dp"
+        android:textSize="@dimen/title_text_size"
+        android:layout_margin="@dimen/title_text_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,7 +23,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="20dp">
         <Button
-            android:background="@drawable/ic_baseline_brightness_1_100"
+            android:background="@drawable/ic_home_button_round_150"
+            android:backgroundTint="#D8E7F0"
             android:id="@+id/btn_exercises"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,7 +37,8 @@
             app:layout_constraintBottom_toTopOf="@+id/btn_myPalettes"/>
 
         <Button
-            android:background="@drawable/ic_baseline_brightness_2_100"
+            android:background="@drawable/ic_home_button_round_150"
+            android:backgroundTint="#DCD8F0"
             android:id="@+id/btn_myPalettes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,7 +51,9 @@
             app:layout_constraintBottom_toTopOf="@+id/btn_browsePalettes"/>
 
         <Button
-            android:background="@drawable/ic_baseline_brightness_3_100"
+
+            android:background="@drawable/ic_home_button_round_150"
+            android:backgroundTint="#F0D8E3"
             android:id="@+id/btn_browsePalettes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
