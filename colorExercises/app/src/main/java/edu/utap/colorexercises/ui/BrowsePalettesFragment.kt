@@ -10,20 +10,17 @@ import androidx.navigation.fragment.findNavController
 import edu.utap.colorexercises.R
 
 /**
- * A simple [Fragment] subclass as the second destination in the navigation.
+ * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
+class BrowsePalettesFragment : Fragment(R.layout.fragment_mypalettes) {
 
     companion object {
-        fun newInstance(): ExercisesFragment {
-            return ExercisesFragment()
+        fun newInstance(): BrowsePalettesFragment {
+            return BrowsePalettesFragment()
         }
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<Button>(R.id.button_second).setOnClickListener {
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
-        }
     }
 }

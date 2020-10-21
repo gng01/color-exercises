@@ -18,10 +18,7 @@ class MainActivity : AppCompatActivity() {
             .beginTransaction()
             // No back stack for home
             .add(R.id.main_frame, homeFragment,"homeFragment")
-            .addToBackStack(null)
-            // TRANSIT_FRAGMENT_FADE calls for the Fragment to fade away
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            .commit()
+            .commitNow()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

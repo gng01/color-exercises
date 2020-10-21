@@ -12,21 +12,15 @@ import edu.utap.colorexercises.R
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class MyPalettesFragment : Fragment() {
+class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
 
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_myPalettes, container, false)
+    companion object {
+        fun newInstance(): MyPalettesFragment {
+            return MyPalettesFragment()
+        }
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<Button>(R.id.button_first).setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-        }
     }
 }
