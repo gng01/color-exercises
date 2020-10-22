@@ -18,6 +18,6 @@ class ExerciseSet {
         return correctList.toList()
     }
 
-    fun getCenter() = this.centerColor
+    fun getMainColor() = this.centerColor
     fun getColorList() = this.colorList
 }

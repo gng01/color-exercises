@@ -130,7 +130,7 @@
             />
     </com.ogaclejapan.arclayout.ArcLayout>
     <Button
-        android:id="@+id/btn_exercise_center"
+        android:id="@+id/btn_exercise_main_color"
         android:layout_gravity="center"
         android:layout_width="@dimen/exercise_button_size"
         android:layout_height="@dimen/exercise_button_size"

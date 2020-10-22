@@ -1,6 +1,5 @@
 package edu.utap.colorexercises.ui
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -21,7 +20,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     private val dummyColorList = listOf<String>("#EDD8F2","#D8F2E5","#F2D8E4","#D8DFF2","#D8F2ED","#F2F2D8")
     private var dummyMatch = Random.nextInt(dummyColorList.size)
-    private var dummyCenter = OneColor(dummyColorList[dummyMatch])
+    private var dummyMainColor = OneColor(dummyColorList[dummyMatch])
     private var dummyTitle = "Match color: click on the color that matches the color of center circle"
     private val exerciseSet = ExerciseSet()
 
@@ -31,20 +30,22 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         }
     }
 
-    private fun SetTitle(view: TextView){
-        view.text = dummyTitle
+    private fun SetTitle(root: View){
+        val titleTV = root.findViewById<TextView>(R.id.txt_exerciseTitle)
+        titleTV.text = dummyTitle
     }
 
     private fun initExerciseSet(){
         val colorList = dummyColorList.map {
             OneColor(it)
         }
-        exerciseSet.AddColorList(dummyCenter,colorList)
+        exerciseSet.AddColorList(dummyMainColor,colorList)
     }
 
-    private fun BindCenter(view: View){
-        view.background.setTint(exerciseSet.getCenter().getInt())
-        view.setOnClickListener {
+    private fun BindMainColor(root: View){
+        val mainColorButton = root.findViewById<Button>(R.id.btn_exercise_main_color)
+        mainColorButton.background.setTint(exerciseSet.getMainColor().getInt())
+        mainColorButton.setOnClickListener {
             Toast.makeText(this.context, "Clicked on center", Toast.LENGTH_LONG).show()
         }
     }
@@ -52,17 +53,28 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         //view.setBackgroundColor(Color.parseColor(dummyColorList[position]))
         view.background.setTint(exerciseSet.getColorList()[position].getInt())
         view.setOnClickListener {
+            val resultFragment = ExerciseResultFragment()
+            val args = Bundle()
+            args.putString(ExerciseResultFragment.mainColorKey,exerciseSet.getMainColor().id)
+            args.putString(ExerciseResultFragment.selectedColorKey,exerciseSet.getColorList()[position].id)
             if (exerciseSet.CorrectPosition("MATCHHUE",0.1)[position]) {
-                Toast.makeText(this.context, "Correct!", Toast.LENGTH_LONG)
-                    .show()
+                args.putString(ExerciseResultFragment.titleKey, "Match!")
+                args.putBoolean(ExerciseResultFragment.resultStateKey, true)
             }else{
-                Toast.makeText(this.context, "Wrong!", Toast.LENGTH_LONG)
-                    .show()
+                args.putString(ExerciseResultFragment.titleKey, "Try Again!")
+                args.putBoolean(ExerciseResultFragment.resultStateKey, false)
             }
+            resultFragment.arguments = args
+            parentFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_frame, resultFragment)
+                .addToBackStack(null)
+                .commit()
         }
     }
 
-    private fun initChildButtons(arcLayout: ArcLayout){
+    private fun initChildButtons(root: View){
+        val arcLayout = root.findViewById<ArcLayout>(R.id.arc_layout)
         for (i in 0 until arcLayout.childCount) {
             //Log.d("XXX ExercisesFragment: ", "${i}'th layout")
             BindButton(arcLayout.getChildAt(i),i)
@@ -71,12 +83,10 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val arcLayout = view.findViewById<ArcLayout>(R.id.arc_layout)
-        val centerButton = view.findViewById<Button>(R.id.btn_exercise_center)
-        val titleTV = view.findViewById<TextView>(R.id.txt_exerciseTitle)
+
         initExerciseSet()
-        initChildButtons(arcLayout)
-        BindCenter(centerButton)
-        SetTitle(titleTV)
+        initChildButtons(view)
+        BindMainColor(view)
+        SetTitle(view)
     }
 }
