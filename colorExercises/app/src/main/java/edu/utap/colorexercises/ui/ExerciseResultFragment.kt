@@ -69,7 +69,7 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
         backButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
-        
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
