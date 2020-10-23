@@ -31,7 +31,7 @@ class OneColor(var hsl: FloatArray) {
             }else{
                 contrast =  (secondLuminance+0.05)/(firstLuminance+0.05)
             }
-            Log.d("XXX OneColor: ", "Contrast is $contrast")
+            //Log.d("XXX OneColor: ", "Contrast is $contrast")
             return contrast
         }
 
@@ -58,7 +58,7 @@ class OneColor(var hsl: FloatArray) {
                 "TRIAD" -> min(abs(0.33-HueDistance(firstColor, secondColor)), abs(0.67-HueDistance(firstColor, secondColor)))
                 else -> 0.toDouble()
             }
-            Log.d("XXX OneColor: ", "value: $value")
+            //Log.d("XXX OneColor: ", "value: $value")
             return value <= Threshold
         }
     }

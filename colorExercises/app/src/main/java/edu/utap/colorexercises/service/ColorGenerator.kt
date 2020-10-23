@@ -1,11 +1,9 @@
-package edu.utap.colorexercises.model
+package edu.utap.colorexercises.service
 
 import android.annotation.SuppressLint
-import android.graphics.Color
-import android.util.Log
 import androidx.core.graphics.ColorUtils
+import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.abs
-import kotlin.random.Random
 
 class ColorGenerator {
     private val invalidColorHexCode = "#808080"
@@ -38,19 +36,23 @@ class ColorGenerator {
                 lowerBound = lightness
             }
             //Log.d("XXX ColorSetGenerator:", "${lowerBound} - ${upperBound}")
-            lightness = (lowerBound+upperBound)/2
+            // randomize the disection to get more random numbers
+            lightness = (lowerBound+upperBound)/ThreadLocalRandom.current().nextInt(1,5)
         }
         return hsl
     }
 
     fun ColorFromRandomHue(saturation: Double,luminance: Double,tolerance: Double): FloatArray{
-        return FindHSLWithLuminance(Random.nextInt(hueRange[0], hueRange[1]), saturation, luminance, tolerance)
+        return FindHSLWithLuminance(ThreadLocalRandom.current().nextInt(hueRange[0], hueRange[1]), saturation, luminance, tolerance)
     }
     fun ColorFromRandomSaturation(hue: Int,luminance: Double,tolerance: Double): FloatArray{
-        return FindHSLWithLuminance(hue, Random.nextDouble(saturationRange[0], saturationRange[1]), luminance, tolerance)
+        return FindHSLWithLuminance(hue, ThreadLocalRandom.current().nextDouble(saturationRange[0], saturationRange[1]), luminance, tolerance)
     }
     fun ColorFromRandomLuminance(hue: Int, saturation: Double,tolerance: Double): FloatArray{
-        return FindHSLWithLuminance(hue, saturation, Random.nextDouble(luminanceRange[0], luminanceRange[1]), tolerance)
+        // reason why we use ThreadLocalRandom.current():
+        // This takes care of seeding that varies. Due to concurrency issue, our program may call this function from the start seed again after a while.
+        return FindHSLWithLuminance(hue, saturation, ThreadLocalRandom.current().nextDouble(
+            luminanceRange[0], luminanceRange[1]), tolerance)
     }
 
 }

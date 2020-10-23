@@ -18,15 +18,15 @@ import kotlin.random.Random
  */
 class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
-//    private val dummyColorList = listOf<String>("#EDD8F2","#D8F2E5","#F2D8E4","#D8DFF2","#D8F2ED","#F2F2D8")
-//    private var dummyMatch = Random.nextInt(dummyColorList.size)
-//    private var dummyMainColor = OneColor(dummyColorList[dummyMatch])
     private var dummyTitle = "Match color: click on the color that matches the color of center circle"
     private lateinit var correctPosition: List<Boolean>
     private val exerciseSet = ExerciseSet()
     private val setSize = 10 //<=12
 
+
     companion object {
+        val refreshKey = "RefreshKey"
+        val exercisesFragmentKey = "ExercisesFragment"
         fun newInstance(): ExercisesFragment {
             return ExercisesFragment()
         }
@@ -38,10 +38,6 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     }
 
     private fun initExerciseSet(){
-//        val colorList = dummyColorList.map {
-//            OneColor(it)
-//        }
-//        exerciseSet.AddColorList(dummyMainColor,colorList)
         exerciseSet.NewAllGreyScaleSet(setSize,0.1)
         this.correctPosition = exerciseSet.getCorrectPosition()
     }
@@ -60,7 +56,6 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         }
         view.visibility = View.VISIBLE
 
-        //view.setBackgroundColor(Color.parseColor(dummyColorList[position]))
         view.background.setTint(exerciseSet.getColorList()[position].getInt())
         view.setOnClickListener {
             val resultFragment = ExerciseResultFragment()
@@ -78,10 +73,14 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             resultFragment.arguments = args
             parentFragmentManager
                 .beginTransaction()
-                .replace(R.id.main_frame, resultFragment)
+                .replace(R.id.main_frame, resultFragment, exercisesFragmentKey)
                 .addToBackStack(null)
                 .commit()
         }
+    }
+
+    fun remoteRefresh(){
+        initExerciseSet()
     }
 
     private fun initChildButtons(root: View){
@@ -93,14 +92,11 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initExerciseSet()
-    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        initExerciseSet()
         initChildButtons(view)
         BindMainColor(view)
         SetTitle(view)

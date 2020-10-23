@@ -1,6 +1,7 @@
 package edu.utap.colorexercises.model
 
 import android.util.Log
+import edu.utap.colorexercises.service.ColorGenerator
 import kotlin.random.Random
 
 class ExerciseSet {
@@ -25,13 +26,20 @@ class ExerciseSet {
     }
 
     fun NewAllGreyScaleSet(setSize: Int, threshold: Double){
-        val tolerance = 0.1 //TODO: hardcoding tolerance for now, should be changed to shared value later
+        val tolerance = 0.02 //TODO: hardcoding tolerance for now, should be changed to shared value later
         val hue = 0
         val saturation = 0.0
         val newColorList = mutableListOf<OneColor>()
         val mainColorMatchTo = Random.nextInt(0,setSize)
+        val addedColors = mutableListOf<FloatArray>()
         for (i in 0 until setSize){
-            newColorList.add(i, OneColor(generator.ColorFromRandomLuminance(hue, saturation,tolerance)))
+            var color = generator.ColorFromRandomLuminance(hue, saturation,tolerance)
+            while (addedColors.contains(color)) {
+                color = generator.ColorFromRandomLuminance(hue, saturation,tolerance)
+            }
+            newColorList.add(i, OneColor(color))
+            addedColors.add(color)
+            //Log.d("XXX ExerciseSet: ", "color: ${color.toList()}")
         }
         this.colorList = newColorList
         this.mainColor = newColorList[mainColorMatchTo]

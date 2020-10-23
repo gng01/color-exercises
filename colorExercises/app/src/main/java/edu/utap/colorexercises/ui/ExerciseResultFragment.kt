@@ -63,10 +63,13 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
     }
 
     private fun initControls(root: View){
-        val backButton = root.findViewById<Button>(R.id.btn_result_back)
+//        val backButton = root.findViewById<Button>(R.id.btn_result_back)
         val nextButton = root.findViewById<Button>(R.id.btn_result_next)
 
-        backButton.setOnClickListener {
+//        backButton.setOnClickListener {
+//            parentFragmentManager.popBackStack()
+//        }
+        nextButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
