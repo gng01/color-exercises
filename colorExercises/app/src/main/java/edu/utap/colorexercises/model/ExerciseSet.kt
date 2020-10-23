@@ -2,6 +2,7 @@ package edu.utap.colorexercises.model
 
 import android.util.Log
 import edu.utap.colorexercises.service.ColorGenerator
+import edu.utap.colorexercises.service.ColorJudge
 import kotlin.random.Random
 
 class ExerciseSet {
@@ -16,10 +17,10 @@ class ExerciseSet {
         this.colorList = colorList
     }
 
-    fun CorrectPosition(criteria: String, threshold: Double): List<Boolean> {
+    fun CorrectPosition(threshold: Double, criteria: (OneColor, OneColor)-> Double): List<Boolean> {
         val correctList = mutableListOf<Boolean>()
         this.colorList.forEachIndexed { i, color ->
-            correctList.add(i,OneColor.match(criteria,this.mainColor,color,threshold.toFloat()))
+            correctList.add(i,ColorJudge.match(this.mainColor,color,threshold.toFloat(), criteria))
         }
         Log.d("XXX ExerciseSet: ", "Correct positions: ${correctList.toList()}")
         return correctList.toList()
@@ -43,7 +44,10 @@ class ExerciseSet {
         }
         this.colorList = newColorList
         this.mainColor = newColorList[mainColorMatchTo]
-        this.correctPositionList = CorrectPosition("MATCHVALUE",threshold)
+
+
+
+        this.correctPositionList = CorrectPosition(threshold,ColorJudge::LuminanceDifference)
 
     }
 
