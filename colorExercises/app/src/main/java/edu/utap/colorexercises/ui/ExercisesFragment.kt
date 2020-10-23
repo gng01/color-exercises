@@ -24,6 +24,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private var dummyTitle = "Match color: click on the color that matches the color of center circle"
     private lateinit var correctPosition: List<Boolean>
     private val exerciseSet = ExerciseSet()
+    private val setSize = 10 //<=12
 
     companion object {
         fun newInstance(): ExercisesFragment {
@@ -41,7 +42,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 //            OneColor(it)
 //        }
 //        exerciseSet.AddColorList(dummyMainColor,colorList)
-        exerciseSet.NewAllGreyScaleSet(6,0.1)
+        exerciseSet.NewAllGreyScaleSet(setSize,0.1)
         this.correctPosition = exerciseSet.getCorrectPosition()
     }
 
@@ -53,6 +54,12 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         }
     }
     private fun BindButton(view: View, position: Int){
+        if(position>=setSize){
+            view.visibility = View.GONE
+            return
+        }
+        view.visibility = View.VISIBLE
+
         //view.setBackgroundColor(Color.parseColor(dummyColorList[position]))
         view.background.setTint(exerciseSet.getColorList()[position].getInt())
         view.setOnClickListener {
