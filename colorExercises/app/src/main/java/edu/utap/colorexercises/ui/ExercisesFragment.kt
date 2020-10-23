@@ -18,10 +18,11 @@ import kotlin.random.Random
  */
 class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
-    private val dummyColorList = listOf<String>("#EDD8F2","#D8F2E5","#F2D8E4","#D8DFF2","#D8F2ED","#F2F2D8")
-    private var dummyMatch = Random.nextInt(dummyColorList.size)
-    private var dummyMainColor = OneColor(dummyColorList[dummyMatch])
+//    private val dummyColorList = listOf<String>("#EDD8F2","#D8F2E5","#F2D8E4","#D8DFF2","#D8F2ED","#F2F2D8")
+//    private var dummyMatch = Random.nextInt(dummyColorList.size)
+//    private var dummyMainColor = OneColor(dummyColorList[dummyMatch])
     private var dummyTitle = "Match color: click on the color that matches the color of center circle"
+    private lateinit var correctPosition: List<Boolean>
     private val exerciseSet = ExerciseSet()
 
     companion object {
@@ -36,10 +37,12 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     }
 
     private fun initExerciseSet(){
-        val colorList = dummyColorList.map {
-            OneColor(it)
-        }
-        exerciseSet.AddColorList(dummyMainColor,colorList)
+//        val colorList = dummyColorList.map {
+//            OneColor(it)
+//        }
+//        exerciseSet.AddColorList(dummyMainColor,colorList)
+        exerciseSet.NewAllGreyScaleSet(6,0.1)
+        this.correctPosition = exerciseSet.getCorrectPosition()
     }
 
     private fun BindMainColor(root: View){
@@ -55,9 +58,10 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         view.setOnClickListener {
             val resultFragment = ExerciseResultFragment()
             val args = Bundle()
-            args.putString(ExerciseResultFragment.mainColorKey,exerciseSet.getMainColor().id)
-            args.putString(ExerciseResultFragment.selectedColorKey,exerciseSet.getColorList()[position].id)
-            if (exerciseSet.CorrectPosition("MATCHHUE",0.1)[position]) {
+            // change common language of color to hsl
+            args.putFloatArray(ExerciseResultFragment.mainColorKey,exerciseSet.getMainColor().hsl)
+            args.putFloatArray(ExerciseResultFragment.selectedColorKey,exerciseSet.getColorList()[position].hsl)
+            if (this.correctPosition[position]) {
                 args.putString(ExerciseResultFragment.titleKey, "Match!")
                 args.putBoolean(ExerciseResultFragment.resultStateKey, true)
             }else{
@@ -78,13 +82,18 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         for (i in 0 until arcLayout.childCount) {
             //Log.d("XXX ExercisesFragment: ", "${i}'th layout")
             BindButton(arcLayout.getChildAt(i),i)
+
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initExerciseSet()
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initExerciseSet()
+
         initChildButtons(view)
         BindMainColor(view)
         SetTitle(view)

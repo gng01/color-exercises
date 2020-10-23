@@ -30,7 +30,7 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
         titleTV.text = title
     }
 
-    private fun initResultPair(root: View, mainColor: String, selectedColor: String){
+    private fun initResultPair(root: View, mainColor: FloatArray, selectedColor: FloatArray){
         val selectedColorButton = root.findViewById<Button>(R.id.btn_result_selection)
         val mainColorButton = root.findViewById<Button>(R.id.btn_result_main)
         val selectedColorObject = OneColor(selectedColor)
@@ -76,8 +76,8 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
         super.onViewCreated(view, savedInstanceState)
         val bundle = arguments ?: return
         val title = bundle.getString(titleKey)
-        val mainColor = bundle.getString(mainColorKey)
-        val selectedColor = bundle.getString(selectedColorKey)
+        val mainColor = bundle.getFloatArray(mainColorKey)
+        val selectedColor = bundle.getFloatArray(selectedColorKey)
         //added resultState in case we want to customize layout between correct and wrong state
         val resultState = bundle.getBoolean(resultStateKey)
 
