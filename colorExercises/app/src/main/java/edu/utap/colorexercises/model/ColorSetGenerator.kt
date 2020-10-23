@@ -2,16 +2,45 @@ package edu.utap.colorexercises.model
 
 import android.graphics.Color
 import androidx.core.graphics.ColorUtils
+import kotlin.random.Random
 
 class ColorSetGenerator {
+    private val invalidColorHexCode = "#808080"
     companion object{
 
+
     }
-    //Code copied from https://stackoverflow.com/questions/4849174/how-to-generate-different-colors-of-same-luminance-for-line-chart-in-java
+
+    fun RandomColorGeneratorFromLuminance(luminance: Double){
+        var xBound = mutableListOf<Double>(0.0,1.0)
+        var yBound = mutableListOf<Double>(0.0,1.0)
+        var colorCoordinate_x = 0.0
+        var colorCoordinate_y = 0.0
+        var generatedColorInHex = this.invalidColorHexCode
+        while (NotValidColor(generatedColorInHex)){
+            //Random generation within given bound
+                colorCoordinate_x = Random.nextDouble(xBound[0],xBound[1])
+                colorCoordinate_y = Random.nextDouble(yBound[0],yBound[1])
+            //shrink range every time generate invalid color, thus overall generation should be quick
+            //Challenge: change upper or lower boundary?
+
+        }
+
+
+    }
+
+    private fun NotValidColor(colorHexCode: String): Boolean {
+        return colorHexCode==this.invalidColorHexCode
+    }
+    //Code modified from https://stackoverflow.com/questions/4849174/how-to-generate-different-colors-of-same-luminance-for-line-chart-in-java
     // A function to generate color from given luminance and color coordinates
-    fun makeARGB(luminance: Double, colorCoordinate_x: Double, colorCoordinate_y: Double): String {
+    // issue with RGB generation scheme: not all x,y value in [0,1] for colorCoordinate will give displayable color
+    // select values between 0.3-0.5 to start with, but there are some colors out side this region
+    // valid region is an irregular color space plot, it changes with luminance setting
+    // invalid color returns: color: #808080, luminance: 0.21586050011389923
+    // regenerate color if see this behavior
 
-
+    fun MakeARGB(luminance: Double, colorCoordinate_x: Double, colorCoordinate_y: Double): String {
         // Out of gamut colour
         var rgb = -0x7f7f80
         val X = luminance * colorCoordinate_x / colorCoordinate_y
@@ -35,10 +64,7 @@ class ColorSetGenerator {
         val red = rgb shr 16 and 0xFF
         val green = rgb shr 8 and 0xFF
         val blue = rgb and 0xFF
-        var hsl = floatArrayOf(0.toFloat(),0.toFloat(),0.toFloat())
-        //need to convert to HSL here due to limitation of ColorUtils
-        //ColorUtils.RGBToHSL(red,green,blue, hsl)
-        // return integer color coding used by default in Kotlin
+        //TODO: decide whether use hex or integer color as key to generate OneColor object
         val hex = String.format("#%02x%02x%02x", red, green, blue)
         return hex
     }

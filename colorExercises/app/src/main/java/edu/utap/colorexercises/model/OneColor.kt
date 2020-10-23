@@ -36,6 +36,7 @@ class OneColor(var id: String) {
         }
 
         fun match(criteria:String, firstColor: OneColor, secondColor: OneColor, Threshold: Float): Boolean {
+            //TODO: moving functions for judging colors to separate class may make more sense
             val value: Double = when (criteria){
                 "MATCHVALUE"-> Contrast(firstColor, secondColor)
                 "MATCHHUE"-> HueDistance(firstColor, secondColor)
