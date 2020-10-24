@@ -14,6 +14,7 @@
         android:gravity="clip_horizontal|center"
         android:text="My Palettes"
         android:textAllCaps="true"
+        android:padding="25dp"
         android:textSize="30dp"></TextView>
 
     <androidx.recyclerview.widget.RecyclerView
