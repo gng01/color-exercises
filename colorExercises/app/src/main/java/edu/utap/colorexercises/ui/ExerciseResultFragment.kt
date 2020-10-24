@@ -80,7 +80,7 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
 
     private fun levelUpAnimation(){
         val levelUpView = view?.findViewById<Button>(R.id.level_up_view)
-        Log.d("XXX ExerciseResultFragment: ", "levelupview: ${levelUpView}")
+        //Log.d("XXX ExerciseResultFragment: ", "levelupview: ${levelUpView}")
         levelUpView?.apply {
             this.visibility = View.VISIBLE
             this.alpha=0.0f

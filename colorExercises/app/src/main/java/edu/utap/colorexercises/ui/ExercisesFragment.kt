@@ -26,7 +26,11 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private var difficultLevel = 30
     private var progress = 0
     private lateinit var progressBar: ProgressBar
-    private val roundsToLevelUp = 4
+    private val roundsToLevelUp = 1
+    private var levelsArray = mutableListOf<Int>(0)
+    private var levelsAdapter: ArrayAdapter<Int>? =null
+    private lateinit var spinnerLevels: Spinner
+
 
 
     companion object {
@@ -49,11 +53,16 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             exerciseSet.setLevel(level)
             this.progress=0
             progressBar.progress = this.progress
+            levelsArray.add(level)
+            spinnerLevels.setSelection(levelsArray.size-1)
+            refresh()
             return true
         }
         // return: if leveled up, variable for showing levelUpAnimation
         return false
     }
+
+
 
 
 
@@ -67,6 +76,22 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         exerciseSet.setDifficultLevel(this.difficultLevel)
         exerciseSet.NewSet()
         this.accuracyList = exerciseSet.getAccuracyList()
+    }
+
+    private fun initSpinner(root: View){
+        spinnerLevels = root.findViewById<Spinner>(R.id.spinner_levels)
+        levelsAdapter = ArrayAdapter(this.requireContext(), R.layout.spinner_row,levelsArray)
+        levelsAdapter!!.notifyDataSetChanged()
+        spinnerLevels.adapter = levelsAdapter
+        spinnerLevels.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                level = levelsArray[p2]
+                refresh()
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+        }
     }
 
     private fun BindMainColor(root: View){
@@ -113,8 +138,17 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         }
     }
 
-    fun remoteRefresh(){
-        initExerciseSet()
+    fun refresh(){
+        val root = view
+        root?.apply {
+            Log.d("XXX ExercisesFragment: ", "refreshing, level $level")
+            initProgressBar(this)
+            initExerciseSet()
+            initChildButtons(this)
+            BindMainColor(this)
+            SetTitle(this)
+        }
+
     }
 
     private fun initChildButtons(root: View){
@@ -131,6 +165,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         super.onViewCreated(view, savedInstanceState)
         initProgressBar(view)
         initExerciseSet()
+        initSpinner(view)
         initChildButtons(view)
         BindMainColor(view)
         SetTitle(view)

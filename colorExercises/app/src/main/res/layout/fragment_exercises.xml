@@ -31,15 +31,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total Points: "
+            android:text="Level: "
             android:textStyle="bold"
             android:textSize="@dimen/user_status_text_size" />
-        <TextView
-            android:id="@+id/txt_points_exercises"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textSize="@dimen/user_status_text_size" />
+        <Spinner
+            android:id="@+id/spinner_levels"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
