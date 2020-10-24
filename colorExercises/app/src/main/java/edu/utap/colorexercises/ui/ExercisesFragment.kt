@@ -17,11 +17,12 @@ import kotlin.math.abs
  */
 class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
-    private var dummyTitle = "Match color: click on the color that matches the color of center circle"
+    private var dummyTitle = "Match color: click on the value that matches the value of center circle"
     private lateinit var accuracyList: List<Double>
     private val exerciseSet = ExerciseSet()
-    private val setSize = 10 //<=12
     private var accuracyThreshold = 90
+    private var level = 0
+    private var difficultLevel = 30
 
 
     companion object {
@@ -38,7 +39,9 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     }
 
     private fun initExerciseSet(){
-        exerciseSet.NewColorToGraySet(setSize,1.0)
+        exerciseSet.setLevel(this.level)
+        exerciseSet.setDifficultLevel(this.difficultLevel)
+        exerciseSet.NewSet()
         this.accuracyList = exerciseSet.getAccuracyList()
     }
 
@@ -50,7 +53,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         }
     }
     private fun BindButton(view: View, position: Int){
-        if(position>=setSize){
+        if(position>=exerciseSet.getSize()){
             view.visibility = View.GONE
             return
         }
@@ -73,6 +76,8 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
                 args.putString(ExerciseResultFragment.titleKey, String.format("Incorrect! Accuracy: %.1f",accuracy))
                 args.putBoolean(ExerciseResultFragment.resultStateKey, false)
             }
+            level++
+            exerciseSet.setLevel(level)
             resultFragment.arguments = args
             parentFragmentManager
                 .beginTransaction()
