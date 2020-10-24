@@ -46,9 +46,26 @@ class ExerciseSet {
         //Log.d("XXX ExerciseSet: ", "main color saturation: ${mainColor.hsl[1]}")
     }
 
+    fun NewHueSet(setSize: Int, mainSaturation: Double, luminance: Double, saturation: Double){
+        //for grayscale: hue = 0, saturation = 0
+        //for randomized hue or saturation: hue = -1 or saturation = -1
+        //Log.d("XXX ExerciseSet: ", "NewLuminanceSet: setSize=${setSize}, saturation=${mainSaturation}, hue=$hue")
+        //TODO: repeating a lot of codes from other newSet functions, think of how to abstract new Colorset idea
+        val tolerance = 0.02
+        val newColorListHSL = generator.ColorSetFromRandomHue(setSize,saturation,luminance,tolerance)
+        val mainColorMatchTo = Random.nextInt(0,setSize)
+        this.colorList = newColorListHSL.map{OneColor(it)}
+        val targetHue = this.colorList[mainColorMatchTo].getHSL()[0].toInt()
+        this.mainColor = OneColor(generator.ColorFromRandomLuminance(targetHue,mainSaturation,tolerance))
+        this.accuracyList = makeAccuracyList(ColorJudge::HueDistance)
+        //Log.d("XXX ExerciseSet: ", "main color saturation: ${mainColor.hsl[1]}")
+    }
+
     fun NewSet() = when(mode){
         //TODO: Ugly hard code for now, think about better ways to represent it, and might be able to import from cloud for extended functionality
         "MATCHVALUE" -> NewLuminanceSet(level%7+6,generator.SaturationForLevel(10,level/7),generator.HueForLevel(level,difficultLevel),generator.SaturationForLevel(10,level/7))
+        "MATCHHUE" ->NewHueSet(level%7+6,generator.SaturationForLevelInversed(10,level/7,0.1),generator.LuminanceForLevel(level,difficultLevel),generator.SaturationForLevelInversed(10,level/7,0.1))
+
         else -> NewLuminanceSet(6,0.0,0,0.0)
 
     }

@@ -55,6 +55,22 @@ class ColorGenerator {
             this.luminanceRange[0], this.luminanceRange[1]), tolerance)
     }
 
+    fun ColorSetFromRandomHue(setSize: Int, saturation: Double,luminance: Double, tolerance: Double): List<FloatArray> {
+        // reason why we use ThreadLocalRandom.current():
+        // This takes care of seeding that varies. Due to concurrency issue, our program may call this function from the start seed again after a while.
+        val newColorList = mutableListOf<FloatArray>()
+        for (i in 0 until setSize){
+//            var color = when(-1){
+//                luminance.toInt()> this.ColorFromRandomLuminance(saturation, luminance, tolerance)
+//                saturation.toInt() -> this.ColorFromRandomSaturation(hue, luminance, tolerance)
+//                else -> this.FindHSLWithLuminance(hue, saturation,luminance,tolerance)
+//            }
+            newColorList.add(ColorFromRandomHue(saturation, luminance, tolerance))
+        }
+        if(luminance.toInt()==-1 || saturation.toInt()==-1){newColorList.shuffle()}
+        return newColorList.toList()
+    }
+
     fun ColorSetFromUniformLuminance(setSize: Int, hue: Int, saturation: Double,tolerance: Double): List<FloatArray> {
         val newColorList = mutableListOf<FloatArray>()
         val luminanceStep = (this.luminanceRange[1]-this.luminanceRange[0])/setSize
@@ -81,12 +97,28 @@ class ColorGenerator {
 
     }
 
+    fun SaturationForLevelInversed(numSteps: Int, position: Int,minSaturation: Double): Double {
+        // used for getting saturation setting for specific level in ExerciseSet
+        val saturationStep = (this.saturationRange[1]-(this.saturationRange[0]+minSaturation))/numSteps
+        return this.saturationRange[1] - saturationStep*position
+
+    }
+
     fun HueForLevel(level: Int, difficultLevel: Int): Int {
         // used for getting saturation setting for specific level in ExerciseSet
         return if (level>= difficultLevel){
             -1
         } else{
             ThreadLocalRandom.current().nextInt(this.hueRange[0], this.hueRange[1])
+        }
+    }
+
+    fun LuminanceForLevel(level: Int, difficultLevel: Int): Double {
+        // used for getting saturation setting for specific level in ExerciseSet
+        return if (level>= difficultLevel){
+            -1.toDouble()
+        } else{
+            ThreadLocalRandom.current().nextDouble(this.luminanceRange[0], this.luminanceRange[1])
         }
     }
 

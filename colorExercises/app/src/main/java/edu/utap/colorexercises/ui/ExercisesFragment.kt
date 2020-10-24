@@ -3,14 +3,11 @@ package edu.utap.colorexercises.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.animation.Animation
 import android.widget.*
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.ogaclejapan.arclayout.ArcLayout
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.ExerciseSet
-import kotlin.math.abs
 
 /**
  * Exercise Fragment that handles view bindings
@@ -23,19 +20,25 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private val exerciseSet = ExerciseSet()
     private var accuracyThreshold = 90
     private var level = 0
+    private var mode = "MATCHVALUE"
     private var difficultLevel = 30
-    private var progress = 0
+    //private var progress = 0
     private lateinit var progressBar: ProgressBar
     private val roundsToLevelUp = 1
     private var levelsArray = mutableListOf<Int>(0)
+    private var modesArray = modeMap.keys.toMutableList()
     private var levelsAdapter: ArrayAdapter<Int>? =null
-    private lateinit var spinnerLevels: Spinner
-
+    private var modesAdapter: ArrayAdapter<String>? =null
+    private lateinit var levelsSpinner: Spinner
+    private lateinit var modesSpinner: Spinner
+    private var levelsMap = mutableMapOf<String,MutableList<Int>>(mode to levelsArray)
 
 
     companion object {
         val refreshKey = "RefreshKey"
         val exercisesFragmentKey = "ExercisesFragment"
+        val modeMap = mapOf("Match Value" to "MATCHVALUE","Match Hue" to "MATCHHUE")
+        var progress = 0
         fun newInstance(): ExercisesFragment {
             return ExercisesFragment()
         }
@@ -46,49 +49,98 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         titleTV.text = dummyTitle
     }
 
-    private fun setProgress(): Boolean {
-        progressBar.progress = this.progress
-        if(progress>=100){
-            this.level++
-            exerciseSet.setLevel(level)
-            this.progress=0
-            progressBar.progress = this.progress
-            levelsArray.add(level)
-            spinnerLevels.setSelection(levelsArray.size-1)
-            refresh()
+    private fun setProgress(givenProgress: Int): Boolean {
+        progressBar.progress = givenProgress
+        //Log.d("XXX ExercisesFragment: ", "progress ${givenProgress}")
+        if(givenProgress>=100){
+            //Log.d("XXX ExercisesFragment: ", "incrementing level to ${level+1}")
+            exerciseSet.setLevel(level+1)
+            updateLevels(level+1)
+            progress=0
+            progressBar.progress = progress
+            //Log.d("XXX ExercisesFragment: ", "selection ${levelsArray.size-1}")
+            levelsSpinner.setSelection(levelsArray.size-1)
             return true
         }
         // return: if leveled up, variable for showing levelUpAnimation
         return false
     }
 
+    private fun updateLevels(level: Int){
+        //Log.d("XXX ExercisesFragment: ", "levels before ${levelsMap.entries}, curlevel $level")
+        if(!levelsMap.containsKey(this.mode)){
+            levelsMap.put(this.mode, mutableListOf(0))
+        }else {
+            levelsMap[this.mode]!!.apply {
+                if(!this.contains(level)) {
+                    this.add(level)
+                    //Log.d("XXX ExercisesFragment: ", "levels ${levelsMap.entries}")
+                }
+            }
+        }
+        levelsArray = levelsMap[this.mode]!!
+        levelsAdapter!!.notifyDataSetChanged()
+        this.level = level
 
+    }
 
 
 
     private fun initProgressBar(root: View){
         this.progressBar = root.findViewById(R.id.progressbar_exercises)
-        this.setProgress()
+        this.setProgress(progress)
+    }
+
+    private fun initLevelsMap(){
+        for (value in modeMap.values){
+            levelsMap.put(value, mutableListOf(0))
+        }
     }
 
     private fun initExerciseSet(){
         exerciseSet.setLevel(this.level)
+        exerciseSet.setMode(this.mode)
         exerciseSet.setDifficultLevel(this.difficultLevel)
         exerciseSet.NewSet()
         this.accuracyList = exerciseSet.getAccuracyList()
     }
 
-    private fun initSpinner(root: View){
-        spinnerLevels = root.findViewById<Spinner>(R.id.spinner_levels)
+    private fun initLevelsSpinner(root: View){
+        levelsSpinner = root.findViewById<Spinner>(R.id.spinner_levels)
         levelsAdapter = ArrayAdapter(this.requireContext(), R.layout.spinner_row,levelsArray)
         levelsAdapter!!.notifyDataSetChanged()
-        spinnerLevels.adapter = levelsAdapter
-        spinnerLevels.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        levelsSpinner.adapter = levelsAdapter
+        levelsSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 level = levelsArray[p2]
-                refresh()
+//                refresh()
             }
 
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+        }
+    }
+
+
+    private fun initModesSpinner(root: View){
+        modesSpinner = root.findViewById<Spinner>(R.id.spinner_modes)
+        modesAdapter = ArrayAdapter(this.requireContext(), R.layout.spinner_modes_row,modesArray)
+        modesAdapter!!.notifyDataSetChanged()
+        modesSpinner.adapter = modesAdapter
+        modesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                //TODO: solve the bug where onItemSelected gets called whenever this view is recreated
+                mode = modeMap[modesArray[p2]] ?: error("mode doesn't exist")
+                if (levelsMap[mode]==null){
+                    updateLevels(0)
+                }else{
+                    updateLevels(levelsMap[mode]!!.last())
+                }
+
+                progress=0
+                Log.d("XXX ExercisesFragment: ", "levelsArray: ${levelsArray.toList()}")
+                 refresh()
+            }
             override fun onNothingSelected(p0: AdapterView<*>?) {
             }
         }
@@ -119,8 +171,8 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             args.putFloatArray(ExerciseResultFragment.mainColorKey,mainColor.hsl)
             args.putFloatArray(ExerciseResultFragment.selectedColorKey,selectedColor.hsl)
             if (accuracy>=this.accuracyThreshold) {
-                this.progress+=accuracy.toInt()/this.roundsToLevelUp
-                var leveledUp = setProgress()
+                progress+=accuracy.toInt()/this.roundsToLevelUp
+                var leveledUp = setProgress(progress)
                 args.putBoolean(ExerciseResultFragment.leveledUpKey, leveledUp)
                 args.putString(ExerciseResultFragment.titleKey, String.format("Match! Accuracy: %.1f",accuracy))
                 args.putBoolean(ExerciseResultFragment.resultStateKey, true)
@@ -141,8 +193,8 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     fun refresh(){
         val root = view
         root?.apply {
-            Log.d("XXX ExercisesFragment: ", "refreshing, level $level")
-            initProgressBar(this)
+            //Log.d("XXX ExercisesFragment: ", "refreshing, level $level")
+            //initProgressBar(this)
             initExerciseSet()
             initChildButtons(this)
             BindMainColor(this)
@@ -156,6 +208,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         for (i in 0 until arcLayout.childCount) {
             //Log.d("XXX ExercisesFragment: ", "${i}'th layout")
             BindButton(arcLayout.getChildAt(i),i)
+            initLevelsMap()
 
         }
     }
@@ -163,9 +216,11 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initProgressBar(view)
         initExerciseSet()
-        initSpinner(view)
+        initLevelsSpinner(view)
+        initModesSpinner(view)
         initChildButtons(view)
         BindMainColor(view)
         SetTitle(view)
