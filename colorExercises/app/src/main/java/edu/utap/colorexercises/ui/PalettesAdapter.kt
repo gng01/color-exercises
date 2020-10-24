@@ -51,7 +51,7 @@ class PalettesAdapter(private val context: Context, private val palettes: List<P
 
     private fun createColorView(index: Int, color: String): ImageView {
         var view = ImageView(context)
-        view.layoutParams = LinearLayout.LayoutParams(100, 100)
+        view.layoutParams = LinearLayout.LayoutParams(150, 150)
         view.setBackgroundColor(Color.parseColor(color))
         //view.id = index
 
