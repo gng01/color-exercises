@@ -44,15 +44,15 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
 
     private fun initializePalettes() : List<Palette> {
         val p1 = Palette()
-        p1.name = "p1"
+        p1.name = "my palette"
         p1.colors = mutableListOf<String>("#333333", "#555555", "#888888", "#AAAAAA")
 
         val p2 = Palette()
-        p2.name = "p2"
+        p2.name = "grayscale"
         p2.colors = mutableListOf<String>("#333333", "#555555", "#888888", "#AAAAAA")
 
         val p3 = Palette()
-        p3.name = "p3"
+        p3.name = "dark vibes"
         p3.colors = mutableListOf<String>("#333333", "#555555", "#888888", "#AAAAAA")
 
         val p4 = Palette()
