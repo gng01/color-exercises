@@ -1,10 +1,11 @@
 package edu.utap.colorexercises.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.view.animation.Animation
+import android.widget.*
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.ogaclejapan.arclayout.ArcLayout
 import edu.utap.colorexercises.R
@@ -23,6 +24,9 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private var accuracyThreshold = 90
     private var level = 0
     private var difficultLevel = 30
+    private var progress = 0
+    private lateinit var progressBar: ProgressBar
+    private val roundsToLevelUp = 4
 
 
     companion object {
@@ -36,6 +40,26 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private fun SetTitle(root: View){
         val titleTV = root.findViewById<TextView>(R.id.txt_exerciseTitle)
         titleTV.text = dummyTitle
+    }
+
+    private fun setProgress(): Boolean {
+        progressBar.progress = this.progress
+        if(progress>=100){
+            this.level++
+            exerciseSet.setLevel(level)
+            this.progress=0
+            progressBar.progress = this.progress
+            return true
+        }
+        // return: if leveled up, variable for showing levelUpAnimation
+        return false
+    }
+
+
+
+    private fun initProgressBar(root: View){
+        this.progressBar = root.findViewById(R.id.progressbar_exercises)
+        this.setProgress()
     }
 
     private fun initExerciseSet(){
@@ -70,14 +94,16 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             args.putFloatArray(ExerciseResultFragment.mainColorKey,mainColor.hsl)
             args.putFloatArray(ExerciseResultFragment.selectedColorKey,selectedColor.hsl)
             if (accuracy>=this.accuracyThreshold) {
+                this.progress+=accuracy.toInt()/this.roundsToLevelUp
+                var leveledUp = setProgress()
+                args.putBoolean(ExerciseResultFragment.leveledUpKey, leveledUp)
                 args.putString(ExerciseResultFragment.titleKey, String.format("Match! Accuracy: %.1f",accuracy))
                 args.putBoolean(ExerciseResultFragment.resultStateKey, true)
             }else{
+                args.putBoolean(ExerciseResultFragment.leveledUpKey, false)
                 args.putString(ExerciseResultFragment.titleKey, String.format("Incorrect! Accuracy: %.1f",accuracy))
                 args.putBoolean(ExerciseResultFragment.resultStateKey, false)
             }
-            level++
-            exerciseSet.setLevel(level)
             resultFragment.arguments = args
             parentFragmentManager
                 .beginTransaction()
@@ -103,7 +129,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        initProgressBar(view)
         initExerciseSet()
         initChildButtons(view)
         BindMainColor(view)

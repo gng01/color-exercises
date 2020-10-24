@@ -34,7 +34,7 @@ class ExerciseSet {
     fun NewLuminanceSet(setSize: Int, mainSaturation: Double, hue: Int, saturation: Double){
         //for grayscale: hue = 0, saturation = 0
         //for randomized hue or saturation: hue = -1 or saturation = -1
-        Log.d("XXX ExerciseSet: ", "NewLuminanceSet: setSize=${setSize}, saturation=${mainSaturation}, hue=$hue")
+        //Log.d("XXX ExerciseSet: ", "NewLuminanceSet: setSize=${setSize}, saturation=${mainSaturation}, hue=$hue")
         //TODO: repeating a lot of codes from other newSet functions, think of how to abstract new Colorset idea
         val tolerance = 0.02
         val newColorListHSL = generator.ColorSetFromUniformLuminance(setSize,hue,saturation,tolerance)
@@ -43,7 +43,7 @@ class ExerciseSet {
         val targetLuminance = this.colorList[mainColorMatchTo].getLuminance()
         this.mainColor = OneColor(generator.ColorFromRandomHue(mainSaturation,targetLuminance,tolerance))
         this.accuracyList = makeAccuracyList(ColorJudge::LuminanceDifference)
-        Log.d("XXX ExerciseSet: ", "main color saturation: ${mainColor.hsl[1]}")
+        //Log.d("XXX ExerciseSet: ", "main color saturation: ${mainColor.hsl[1]}")
     }
 
     fun NewSet() = when(mode){

@@ -1,9 +1,11 @@
 package edu.utap.colorexercises.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
@@ -20,6 +22,7 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
         val selectedColorKey = "SelectedColorKey"
         val mainColorKey = "MainColorKey"
         val resultStateKey = "ResultStateKey"
+        val leveledUpKey = "LeveledUpKey"
         fun newInstance(): ExerciseResultFragment {
             return ExerciseResultFragment()
         }
@@ -75,6 +78,30 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
 
     }
 
+    private fun levelUpAnimation(){
+        val levelUpView = view?.findViewById<Button>(R.id.level_up_view)
+        Log.d("XXX ExerciseResultFragment: ", "levelupview: ${levelUpView}")
+        levelUpView?.apply {
+            this.visibility = View.VISIBLE
+            this.alpha=0.0f
+            this.animate()
+                .alpha(0.7f)
+                .scaleXBy(2.0f)
+                .scaleYBy(2.0f)
+                .setListener(null)
+                .setDuration(2000)
+                .withEndAction {
+                    this.animate()
+                        .alpha(0.0f)
+                        .setDuration(1000)
+                        .withEndAction {
+                            this.visibility = View.GONE
+                        }
+                }
+                .start()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val bundle = arguments ?: return
@@ -83,10 +110,12 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
         val selectedColor = bundle.getFloatArray(selectedColorKey)
         //added resultState in case we want to customize layout between correct and wrong state
         val resultState = bundle.getBoolean(resultStateKey)
+        val leveledUp = bundle.getBoolean(leveledUpKey)
 
         if (title!=null) {initTitle(view, title)}
         if (mainColor!=null && selectedColor!=null) {initResultPair(view,mainColor,selectedColor)}
         initControls(view)
+        if (leveledUp) levelUpAnimation()
 
     }
 }

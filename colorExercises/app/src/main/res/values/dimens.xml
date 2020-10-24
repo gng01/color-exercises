@@ -5,4 +5,5 @@
     <dimen name="title_text_margin">20dp</dimen>
     <dimen name="user_status_text_size">18sp</dimen>
     <dimen name="exercise_pair_offset">100dp</dimen>
+    <dimen name="exercise_progress_bar">250dp</dimen>
 </resources>
