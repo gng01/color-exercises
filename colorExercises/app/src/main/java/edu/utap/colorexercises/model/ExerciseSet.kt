@@ -1,6 +1,5 @@
 package edu.utap.colorexercises.model
 
-import android.util.Log
 import edu.utap.colorexercises.service.ColorGenerator
 import edu.utap.colorexercises.service.ColorJudge
 import kotlin.random.Random
@@ -8,26 +7,28 @@ import kotlin.random.Random
 class ExerciseSet {
     private lateinit var mainColor: OneColor
     private lateinit var colorList: List<OneColor>
-    private lateinit var correctPositionList: List<Boolean>
+    private lateinit var accuracyList: List<Double>
     private val generator = ColorGenerator()
 
-    //TODO: Add Title to exercise Set
+    //TODO: Add Title/ explanation to exercise Set
     fun AddColorList(centerColor: OneColor, colorList: List<OneColor>){
         this.mainColor = centerColor
         this.colorList = colorList
     }
 
-    fun CorrectPosition(threshold: Double, criteria: (OneColor, OneColor)-> Double): List<Boolean> {
-        val correctList = mutableListOf<Boolean>()
+    private fun makeAccuracyList(criteria: (OneColor, OneColor)-> Double): List<Double> {
+        val correctList = mutableListOf<Double>()
         this.colorList.forEachIndexed { i, color ->
-            correctList.add(i,ColorJudge.match(this.mainColor,color,threshold.toFloat(), criteria))
+            correctList.add(i,ColorJudge.accuracy(this.mainColor,color,criteria))
         }
-        Log.d("XXX ExerciseSet: ", "Correct positions: ${correctList.toList()}")
+        //Log.d("XXX ExerciseSet: ", "Correct positions: ${correctList.toList()}")
         return correctList.toList()
     }
 
-    fun NewAllGreyScaleSet(setSize: Int, threshold: Double){
-        val tolerance = 0.02 //TODO: hardcoding tolerance for now, should be changed to shared value later
+
+    fun NewColorToGraySet(setSize: Int, mainSaturation: Double){
+        //TODO: repeating a lot of codes from other newSet functions, think of how to abstract new Colorset idea
+        val tolerance = 0.02
         val hue = 0
         val saturation = 0.0
         val newColorList = mutableListOf<OneColor>()
@@ -43,17 +44,13 @@ class ExerciseSet {
             //Log.d("XXX ExerciseSet: ", "color: ${color.toList()}")
         }
         this.colorList = newColorList
-        this.mainColor = newColorList[mainColorMatchTo]
-
-
-
-        this.correctPositionList = CorrectPosition(threshold,ColorJudge::LuminanceDifference)
-
+        val targetLuminance = newColorList[mainColorMatchTo].getLuminance()
+        this.mainColor = OneColor(generator.ColorFromRandomHue(mainSaturation,targetLuminance,tolerance))
+        this.accuracyList = makeAccuracyList(ColorJudge::LuminanceDifference)
     }
-
 
     fun getMainColor() = this.mainColor
     fun getColorList() = this.colorList
-    fun getCorrectPosition() = this.correctPositionList
+    fun getAccuracyList() = this.accuracyList
 
 }

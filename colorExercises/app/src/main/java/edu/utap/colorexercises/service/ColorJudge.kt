@@ -41,11 +41,10 @@ class ColorJudge {
             return min(abs(0.33-HueDistance(firstColor, secondColor)), abs(0.67-HueDistance(firstColor, secondColor)))
         }
 
-        fun match(firstColor: OneColor, secondColor: OneColor, threshold: Float,criteria: (OneColor, OneColor)-> Double): Boolean {
-            //TODO: moving functions for judging colors to separate class may make more sense
+        fun accuracy(firstColor: OneColor, secondColor: OneColor, criteria: (OneColor, OneColor)-> Double): Double {
             val value: Double = criteria(firstColor,secondColor)
             //Log.d("XXX OneColor: ", "value: $value")
-            return value <= threshold
+            return (1-value)*100 //100 full score scale
         }
     }
 }

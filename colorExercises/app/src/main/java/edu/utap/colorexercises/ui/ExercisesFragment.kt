@@ -9,8 +9,7 @@ import androidx.fragment.app.Fragment
 import com.ogaclejapan.arclayout.ArcLayout
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.ExerciseSet
-import edu.utap.colorexercises.model.OneColor
-import kotlin.random.Random
+import kotlin.math.abs
 
 /**
  * Exercise Fragment that handles view bindings
@@ -19,9 +18,10 @@ import kotlin.random.Random
 class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     private var dummyTitle = "Match color: click on the color that matches the color of center circle"
-    private lateinit var correctPosition: List<Boolean>
+    private lateinit var accuracyList: List<Double>
     private val exerciseSet = ExerciseSet()
     private val setSize = 10 //<=12
+    private var accuracyThreshold = 90
 
 
     companion object {
@@ -38,8 +38,8 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     }
 
     private fun initExerciseSet(){
-        exerciseSet.NewAllGreyScaleSet(setSize,0.1)
-        this.correctPosition = exerciseSet.getCorrectPosition()
+        exerciseSet.NewColorToGraySet(setSize,1.0)
+        this.accuracyList = exerciseSet.getAccuracyList()
     }
 
     private fun BindMainColor(root: View){
@@ -60,14 +60,17 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         view.setOnClickListener {
             val resultFragment = ExerciseResultFragment()
             val args = Bundle()
-            // change common language of color to hsl
-            args.putFloatArray(ExerciseResultFragment.mainColorKey,exerciseSet.getMainColor().hsl)
-            args.putFloatArray(ExerciseResultFragment.selectedColorKey,exerciseSet.getColorList()[position].hsl)
-            if (this.correctPosition[position]) {
-                args.putString(ExerciseResultFragment.titleKey, "Match!")
+            //TODO: passing the raw hsl to ResultFragment, not sure whether it is the best approach
+            val mainColor = exerciseSet.getMainColor()
+            val selectedColor = exerciseSet.getColorList()[position]
+            val accuracy = accuracyList[position]
+            args.putFloatArray(ExerciseResultFragment.mainColorKey,mainColor.hsl)
+            args.putFloatArray(ExerciseResultFragment.selectedColorKey,selectedColor.hsl)
+            if (accuracy>=this.accuracyThreshold) {
+                args.putString(ExerciseResultFragment.titleKey, String.format("Match! Accuracy: %.1f",accuracy))
                 args.putBoolean(ExerciseResultFragment.resultStateKey, true)
             }else{
-                args.putString(ExerciseResultFragment.titleKey, "Try Again!")
+                args.putString(ExerciseResultFragment.titleKey, String.format("Incorrect! Accuracy: %.1f",accuracy))
                 args.putBoolean(ExerciseResultFragment.resultStateKey, false)
             }
             resultFragment.arguments = args
