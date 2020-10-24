@@ -63,6 +63,18 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
         p5.name = "p5"
         p5.colors = mutableListOf<String>("#333333", "#555555", "#888888", "#AAAAAA")
 
-        return listOf<Palette>(p1,p2,p3,p4,p5)
+        val p6 = Palette()
+        p6.name = "dark vibes ii"
+        p6.colors = mutableListOf<String>("#333333", "#555555", "#888888", "#AAAAAA")
+
+        val p7 = Palette()
+        p7.name = "p7"
+        p7.colors = mutableListOf<String>("#333333", "#555555", "#888888", "#AAAAAA")
+
+        val p8 = Palette()
+        p8.name = "p8"
+        p8.colors = mutableListOf<String>("#333333", "#555555", "#888888", "#AAAAAA")
+
+        return listOf<Palette>(p1,p2,p3,p4,p5,p6,p7,p8)
     }
 }
