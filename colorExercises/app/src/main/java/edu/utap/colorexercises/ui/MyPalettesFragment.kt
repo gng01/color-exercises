@@ -1,5 +1,6 @@
 package edu.utap.colorexercises.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,8 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import edu.utap.colorexercises.EditColorActivity
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.Palette
+import kotlinx.android.synthetic.main.fragment_mypalettes.*
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -30,6 +33,14 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
         val palettes = initializePalettes()
 
         initAdapter(view, palettes)
+
+        editPalette.setOnClickListener{
+            val intent = Intent(activity, EditColorActivity::class.java)
+            val extras = Bundle()
+            intent.putExtras(extras)
+            val result = 1
+            startActivityForResult(intent, result)
+        }
     }
 
     private fun initAdapter(view: View, palettes : List<Palette>) {
