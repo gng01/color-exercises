@@ -45,6 +45,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     //dependency for wheelview
     implementation 'com.ogaclejapan.arclayout:library:1.1.0@aar'
+    implementation 'com.larswerkman:HoloColorPicker:1.5'
 
     testImplementation 'junit:junit:4.12'
     testImplementation "org.robolectric:robolectric:4.3"
