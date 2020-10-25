@@ -15,6 +15,7 @@ import edu.utap.colorexercises.model.ExerciseSet
  */
 class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
+    private val debug = false
     private var dummyTitle = "Match color: click on the value that matches the value of center circle"
     private lateinit var accuracyList: List<Double>
     private val exerciseSet = ExerciseSet()
@@ -24,7 +25,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private var difficultLevel = 30
     //private var progress = 0
     private lateinit var progressBar: ProgressBar
-    private val roundsToLevelUp = 1
+    private var roundsToLevelUp = 4
     private var levelsArray = mutableListOf<Int>(0)
     private var modesArray = modeMap.keys.toMutableList()
     private var levelsAdapter: ArrayAdapter<Int>? =null
@@ -44,6 +45,13 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         }
     }
 
+    private fun setDebugMode(){
+        if (this.debug) {
+            this.roundsToLevelUp = 1
+            this.accuracyThreshold = 0
+        }
+    }
+
     private fun SetTitle(root: View){
         val titleTV = root.findViewById<TextView>(R.id.txt_exerciseTitle)
         titleTV.text = dummyTitle
@@ -58,8 +66,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             updateLevels(level+1)
             progress=0
             progressBar.progress = progress
-            //Log.d("XXX ExercisesFragment: ", "selection ${levelsArray.size-1}")
-            levelsSpinner.setSelection(levelsArray.size-1)
+            //trick to get around spinner.setSelection not working issue
             return true
         }
         // return: if leveled up, variable for showing levelUpAnimation
@@ -68,18 +75,24 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     private fun updateLevels(level: Int){
         //Log.d("XXX ExercisesFragment: ", "levels before ${levelsMap.entries}, curlevel $level")
+        //Log.d("XXX ExercisesFragment: ", "levels ${levelsMap.entries}")
         if(!levelsMap.containsKey(this.mode)){
             levelsMap.put(this.mode, mutableListOf(0))
         }else {
             levelsMap[this.mode]!!.apply {
                 if(!this.contains(level)) {
                     this.add(level)
-                    //Log.d("XXX ExercisesFragment: ", "levels ${levelsMap.entries}")
+
+
                 }
             }
         }
         levelsArray = levelsMap[this.mode]!!
+        Log.d("XXX ExercisesFragment: updateLevels", "levelsArray: ${levelsArray.toList()}, ${levelsArray.last()}")
         levelsAdapter!!.notifyDataSetChanged()
+        levelsSpinner.post(Runnable {
+            kotlin.run { levelsSpinner.setSelection(levelsArray.last()) }
+        })
         this.level = level
 
     }
@@ -112,8 +125,10 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         levelsSpinner.adapter = levelsAdapter
         levelsSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                if (levelsArray[p2]==level) return
                 level = levelsArray[p2]
-//                refresh()
+                Log.d("XXX ExercisesFragment: levelsSpinner", "levelsArray: ${levelsArray.toList()}")
+                refresh()
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -129,17 +144,24 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         modesSpinner.adapter = modesAdapter
         modesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                //TODO: solve the bug where onItemSelected gets called whenever this view is recreated
+                //TODO: had bug when switching from MATCHHUE to MATCHVALUE: index out of bound: index 5 for size 5
+                // however, not able to reproduce
+                if (modeMap[modesArray[p2]]==mode) return
                 mode = modeMap[modesArray[p2]] ?: error("mode doesn't exist")
                 if (levelsMap[mode]==null){
                     updateLevels(0)
                 }else{
-                    updateLevels(levelsMap[mode]!!.last())
+                    levelsArray = levelsMap[mode]!!
+                    levelsAdapter?.notifyDataSetChanged()
+                    updateLevels(levelsArray.last())
                 }
 
                 progress=0
-                Log.d("XXX ExercisesFragment: ", "levelsArray: ${levelsArray.toList()}")
-                 refresh()
+                levelsSpinner.post(Runnable {
+                    kotlin.run { levelsSpinner.setSelection(levelsArray.last()) }
+                })
+                Log.d("XXX ExercisesFragment: ModeSpinner", "levelsArray: ${levelsArray.toList()}")
+                refresh()
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
             }
@@ -164,14 +186,13 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         view.setOnClickListener {
             val resultFragment = ExerciseResultFragment()
             val args = Bundle()
-            //TODO: passing the raw hsl to ResultFragment, not sure whether it is the best approach
             val mainColor = exerciseSet.getMainColor()
             val selectedColor = exerciseSet.getColorList()[position]
             val accuracy = accuracyList[position]
             args.putFloatArray(ExerciseResultFragment.mainColorKey,mainColor.hsl)
             args.putFloatArray(ExerciseResultFragment.selectedColorKey,selectedColor.hsl)
             if (accuracy>=this.accuracyThreshold) {
-                progress+=accuracy.toInt()/this.roundsToLevelUp
+                progress+=accuracy.toInt()/this.roundsToLevelUp.toInt()
                 var leveledUp = setProgress(progress)
                 args.putBoolean(ExerciseResultFragment.leveledUpKey, leveledUp)
                 args.putString(ExerciseResultFragment.titleKey, String.format("Match! Accuracy: %.1f",accuracy))
@@ -195,10 +216,11 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         root?.apply {
             //Log.d("XXX ExercisesFragment: ", "refreshing, level $level")
             //initProgressBar(this)
-            initExerciseSet()
-            initChildButtons(this)
-            BindMainColor(this)
+             initExerciseSet()
+             initChildButtons(this)
+             BindMainColor(this)
             SetTitle(this)
+
         }
 
     }
@@ -208,9 +230,14 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         for (i in 0 until arcLayout.childCount) {
             //Log.d("XXX ExercisesFragment: ", "${i}'th layout")
             BindButton(arcLayout.getChildAt(i),i)
-            initLevelsMap()
 
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setDebugMode()
+        initLevelsMap()
     }
 
 
@@ -219,6 +246,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
         initProgressBar(view)
         initExerciseSet()
+
         initLevelsSpinner(view)
         initModesSpinner(view)
         initChildButtons(view)
