@@ -1,5 +1,6 @@
 package edu.utap.colorexercises
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -17,6 +18,11 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
     private var button: Button? = null
     private var text: TextView? = null
 
+    companion object {
+        val originalColorKey = "originalColor"
+        val colorKey = "editcolor"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_color)
@@ -24,17 +30,40 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
         svBar = findViewById<View>(R.id.svbar) as SVBar
         opacityBar = findViewById<View>(R.id.opacitybar) as OpacityBar
         button = findViewById<View>(R.id.button1) as Button
-        text = findViewById<View>(R.id.textView1) as TextView
         picker!!.addSVBar(svBar)
         picker!!.addOpacityBar(opacityBar)
         picker!!.setOnColorChangedListener(this)
         button!!.setOnClickListener {
-            text!!.setTextColor(picker!!.color)
             picker!!.oldCenterColor = picker!!.color
+
+            onFinish(picker!!.color)
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        val sourceIntent = intent
+        val sourceBundle = sourceIntent.extras
+        val originalColor = sourceBundle?.getInt(originalColorKey)
+
+        picker = findViewById<View>(R.id.picker) as ColorPicker
+
+        if (originalColor != null) {
+            picker!!.oldCenterColor = originalColor
+        }
+    }
+
+    fun onFinish(color: Int) {
+        Intent().apply{
+            putExtra(colorKey, color)
+
+            setResult(RESULT_OK, this)
+        }
+
+        finish()
+    }
+
     override fun onColorChanged(color: Int) {
-        //gives the color when it's changed.
     }
 }

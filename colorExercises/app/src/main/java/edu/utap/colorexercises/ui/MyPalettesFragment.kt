@@ -1,21 +1,18 @@
 package edu.utap.colorexercises.ui
 
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import edu.utap.colorexercises.EditColorActivity
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.Palette
 import kotlinx.android.synthetic.main.fragment_mypalettes.*
+
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -33,17 +30,39 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
         val palettes = initializePalettes()
 
         initAdapter(view, palettes)
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val buttonColor = getBgColor(editPalette)
 
         editPalette.setOnClickListener{
             val intent = Intent(activity, EditColorActivity::class.java)
             val extras = Bundle()
+            extras.putInt(EditColorActivity.originalColorKey, buttonColor)
             intent.putExtras(extras)
             val result = 1
             startActivityForResult(intent, result)
         }
     }
 
-    private fun initAdapter(view: View, palettes : List<Palette>) {
+    private fun getBgColor(view: View): Int {
+        return (view.background as ColorDrawable).color
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        data?.extras?.apply{
+            val color = getInt(EditColorActivity.colorKey)
+
+            val view = editPalette
+            view.setBackgroundColor(color)
+        }
+    }
+
+    private fun initAdapter(view: View, palettes: List<Palette>) {
         var palettesView = view.findViewById<RecyclerView>(R.id.palette_list)
 
         palettesView.layoutManager = LinearLayoutManager(requireContext())
@@ -86,6 +105,6 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
         p8.name = "p8"
         p8.colors = mutableListOf<String>("#333333", "#555555", "#888888", "#AAAAAA")
 
-        return listOf<Palette>(p1,p2,p3,p4,p5,p6,p7,p8)
+        return listOf<Palette>(p1, p2, p3, p4, p5, p6, p7, p8)
     }
 }
