@@ -29,10 +29,8 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
         picker!!.addOpacityBar(opacityBar)
         picker!!.setOnColorChangedListener(this)
         button!!.setOnClickListener {
-            fun onClick(v: View?) {
-                text!!.setTextColor(picker!!.color)
-                picker!!.oldCenterColor = picker!!.color
-            }
+            text!!.setTextColor(picker!!.color)
+            picker!!.oldCenterColor = picker!!.color
         }
     }
 
