@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import edu.utap.colorexercises.EditColorActivity
+import edu.utap.colorexercises.EditPaletteActivity
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.Palette
 import kotlinx.android.synthetic.main.fragment_mypalettes.*
@@ -35,30 +36,21 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
     override fun onStart() {
         super.onStart()
 
-        val buttonColor = getBgColor(editPalette)
-
+        // this will get moved to the adapter so that we pass through a list of colors (palette)
         editPalette.setOnClickListener{
-            val intent = Intent(activity, EditColorActivity::class.java)
+            val intent = Intent(activity, EditPaletteActivity::class.java)
             val extras = Bundle()
-            extras.putInt(EditColorActivity.originalColorKey, buttonColor)
             intent.putExtras(extras)
             val result = 1
             startActivityForResult(intent, result)
         }
     }
 
-    private fun getBgColor(view: View): Int {
-        return (view.background as ColorDrawable).color
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         data?.extras?.apply{
-            val color = getInt(EditColorActivity.colorKey)
 
-            val view = editPalette
-            view.setBackgroundColor(color)
         }
     }
 
