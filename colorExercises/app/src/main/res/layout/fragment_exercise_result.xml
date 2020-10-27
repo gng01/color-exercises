@@ -70,8 +70,8 @@
             android:background="@drawable/ic_baseline_navigate_before_50"
             android:backgroundTint="@color/colorPrimary"
             android:id="@+id/btn_result_back"
-            android:layout_width="@dimen/exercise_button_size"
-            android:layout_height="@dimen/exercise_button_size"
+            android:layout_width="@dimen/control_button_size"
+            android:layout_height="@dimen/control_button_size"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -79,8 +79,8 @@
         <Button
             android:background="@drawable/ic_baseline_navigate_next_50"
             android:id="@+id/btn_result_next"
-            android:layout_width="@dimen/exercise_button_size"
-            android:layout_height="@dimen/exercise_button_size"
+            android:layout_width="@dimen/control_button_size"
+            android:layout_height="@dimen/control_button_size"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>

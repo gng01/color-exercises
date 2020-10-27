@@ -1,12 +1,16 @@
 package edu.utap.colorexercises.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.fragment.app.Fragment
 import com.ogaclejapan.arclayout.ArcLayout
+import edu.utap.colorexercises.MainActivity
 import edu.utap.colorexercises.R
+import edu.utap.colorexercises.model.ExerciseMode
 import edu.utap.colorexercises.model.ExerciseModesRepository
 import edu.utap.colorexercises.model.ExerciseSet
 
@@ -27,7 +31,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private val exerciseSet = ExerciseSet()
     private var accuracyThreshold = 90
     private var level = 0
-    private var mode = "MATCHVALUE"
+    private var mode = modesList[0]//"MATCHVALUE"
     private var description = "DummyTitle"
     private var difficultLevel = 30
     //private var progress = 0
@@ -39,7 +43,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private var modesAdapter: ArrayAdapter<String>? =null
     private lateinit var levelsSpinner: Spinner
     private lateinit var modesSpinner: Spinner
-    private var levelsMap = mutableMapOf<String,MutableList<Int>>(mode to levelsArray)
+    private var levelsMap = mutableMapOf<ExerciseMode,MutableList<Int>>(mode to levelsArray)
 
 
     companion object {
@@ -65,6 +69,15 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         titleTV.text = description
     }
 
+    private fun setHelp(root: View){
+        val helpButton = root.findViewById<Button>(R.id.btn_exercise_help)
+        helpButton.setOnClickListener {
+            val urlIntent = Intent(Intent.ACTION_VIEW)
+            urlIntent.data = Uri.parse(mode.help)
+            this.requireActivity().startActivity(urlIntent)
+        }
+    }
+
     private fun setProgress(givenProgress: Int): Boolean {
         progressBar.progress = givenProgress
         //Log.d("XXX ExercisesFragment: ", "progress ${givenProgress}")
@@ -85,7 +98,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         //Log.d("XXX ExercisesFragment: ", "levels before ${levelsMap.entries}, curlevel $level")
         //Log.d("XXX ExercisesFragment: ", "levels ${levelsMap.entries}")
         if(!levelsMap.containsKey(this.mode)){
-            levelsMap.put(this.mode, mutableListOf(0))
+            levelsMap[this.mode] = mutableListOf(0)
         }else {
             levelsMap[this.mode]!!.apply {
                 if(!this.contains(level)) {
@@ -113,18 +126,18 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     }
 
     private fun initLevelsMap(){
-        for (value in modesList.map{it.id}){//modeMap.values){
-            levelsMap.put(value, mutableListOf(0))
+        for (value in modesList){//modeMap.values){
+            levelsMap[value] = mutableListOf(0)
         }
     }
 
     private fun initExerciseSet(){
         exerciseSet.setLevel(this.level)
-        exerciseSet.setMode(this.mode)
+        exerciseSet.setMode(this.mode.id)
         exerciseSet.setDifficultLevel(this.difficultLevel)
         exerciseSet.NewSet()
         this.accuracyList = exerciseSet.getAccuracyList()
-        this.description = modesList.find{it.id==this.mode}?.description!!
+        this.description = mode.description
 
     }
 
@@ -156,8 +169,8 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 //TODO: had bug when switching from MATCHHUE to MATCHVALUE: index out of bound: index 5 for size 5
                 // however, not able to reproduce
-                if (modesList.find { it.displayName== displaynamesArray[p2]}?.id==mode) return //modeMapName2ID[displaynamesArray[p2]]==mode) return
-                mode = modesList.find { it.displayName== displaynamesArray[p2]}?.id ?: error("mode doesn't exist")
+                if (modesList.find { it.displayName== displaynamesArray[p2]}?.id==mode.id) return //modeMapName2ID[displaynamesArray[p2]]==mode) return
+                mode = modesList.find { it.displayName== displaynamesArray[p2]}?: error("mode doesn't exist")
                 if (levelsMap[mode]==null){
                     updateLevels(0)
                 }else{
@@ -230,6 +243,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
              initChildButtons(this)
              BindMainColor(this)
             SetTitle(this)
+            setHelp(this)
 
         }
 
@@ -262,5 +276,6 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         initChildButtons(view)
         BindMainColor(view)
         SetTitle(view)
+        setHelp(view)
     }
 }
