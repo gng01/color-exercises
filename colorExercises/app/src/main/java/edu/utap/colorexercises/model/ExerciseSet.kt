@@ -12,7 +12,6 @@ class ExerciseSet {
     private val generator = ColorGenerator()
     private var level = 0
     private var mode = "MATCHVALUE"
-    private var easyLevel = 5
     private var difficultLevel = 30
 
     //TODO: Add Title/ explanation to exercise Set
