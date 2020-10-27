@@ -6,15 +6,13 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.larswerkman.holocolorpicker.ColorPicker
-import com.larswerkman.holocolorpicker.OpacityBar
-import com.larswerkman.holocolorpicker.SVBar
+import com.larswerkman.holocolorpicker.*
 
 class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListener {
 
     private var picker: ColorPicker? = null
-    private var svBar: SVBar? = null
-    private var opacityBar: OpacityBar? = null
+    private var saturationBar: SaturationBar? = null
+    private var valueBar: ValueBar? = null
     private var button: Button? = null
     private var text: TextView? = null
 
@@ -27,11 +25,11 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_color)
         picker = findViewById<View>(R.id.picker) as ColorPicker
-        svBar = findViewById<View>(R.id.svbar) as SVBar
-        opacityBar = findViewById<View>(R.id.opacitybar) as OpacityBar
+        saturationBar = findViewById<View>(R.id.saturationbar) as SaturationBar
+        valueBar = findViewById<View>(R.id.valuebar) as ValueBar
         button = findViewById<View>(R.id.button1) as Button
-        picker!!.addSVBar(svBar)
-        picker!!.addOpacityBar(opacityBar)
+        picker!!.addSaturationBar(saturationBar)
+        picker!!.addValueBar(valueBar)
         picker!!.setOnColorChangedListener(this)
         button!!.setOnClickListener {
             picker!!.oldCenterColor = picker!!.color
