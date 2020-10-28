@@ -20,4 +20,38 @@
         android:background="#FFFF00"
         android:text="CLICK ME\ncolor picker test">
     </TextView>
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2">
+        <ImageView
+            android:background="#000000"
+            android:layout_height="50dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="10dp"
+            >
+        </ImageView>
+        <ImageView
+            android:background="#333333"
+            android:layout_height="50dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="10dp"
+            >
+        </ImageView>
+        <ImageView
+            android:background="#666666"
+            android:layout_height="50dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="10dp"
+            >
+        </ImageView>
+        <ImageView
+            android:background="#999999"
+            android:layout_height="50dp"
+            android:layout_columnWeight="1"
+            android:layout_margin="10dp"
+            >
+        </ImageView>
+    </GridLayout>
 </LinearLayout>
