@@ -1,11 +1,13 @@
 package edu.utap.colorexercises
 
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
+import android.view.View.generateViewId
+import android.widget.GridLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_palette.*
 
@@ -15,21 +17,49 @@ class EditPaletteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_palette)
 
+        val colors = listOf<String>("#333333", "#555555", "#888888", "#AAAAAA")
+
+        populateColors(colors)
     }
 
-    override fun onStart() {
-        super.onStart()
+    private fun populateColors(colors: List<String>) {
+        colors.forEach{
+            val view = createColorView(it)
+            palette_colors.addView(view)
+        }
+    }
 
-        val buttonColor = getBgColor(editColor)
+    private fun createColorView(color: String): TextView {
+        val id = generateViewId()
 
-        editColor.setOnClickListener{
+        var view = TextView(this)
+        view.id = id
+        view.layoutParams = GridLayout.LayoutParams(
+            GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL, 1f),
+            GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL, 1f),
+        )
+
+        view.setBackgroundColor(Color.parseColor(color))
+        view.height = 100
+
+        val triggerColor = getBgColor(view)
+
+        view.setOnClickListener{
             val intent = Intent(this, EditColorActivity::class.java)
             val extras = Bundle()
-            extras.putInt(EditColorActivity.originalColorKey, buttonColor)
+            extras.putInt(EditColorActivity.originalColorKey, triggerColor)
+            extras.putInt("id", id)
+
             intent.putExtras(extras)
             val result = 1
             startActivityForResult(intent, result)
         }
+
+        return view;
+    }
+
+    override fun onStart() {
+        super.onStart()
     }
 
     private fun getBgColor(view: View): Int {
@@ -41,8 +71,9 @@ class EditPaletteActivity : AppCompatActivity() {
 
         data?.extras?.apply{
             val color = getInt(EditColorActivity.colorKey)
+            val id = getInt("id")
 
-            val view = editColor
+            val view = findViewById<TextView>(id)
             view.setBackgroundColor(color)
         }
     }

@@ -16,6 +16,8 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
     private var button: Button? = null
     private var text: TextView? = null
 
+    private var id: Int = 0
+
     companion object {
         val originalColorKey = "originalColor"
         val colorKey = "editcolor"
@@ -34,7 +36,7 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
         button!!.setOnClickListener {
             picker!!.oldCenterColor = picker!!.color
 
-            onFinish(picker!!.color)
+            onFinish(id, picker!!.color)
         }
     }
 
@@ -44,6 +46,7 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
         val sourceIntent = intent
         val sourceBundle = sourceIntent.extras
         val originalColor = sourceBundle?.getInt(originalColorKey)
+        this.id = sourceBundle?.getInt("id")!!
 
         picker = findViewById<View>(R.id.picker) as ColorPicker
 
@@ -52,9 +55,10 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
         }
     }
 
-    fun onFinish(color: Int) {
+    fun onFinish(id: Int, color: Int) {
         Intent().apply{
             putExtra(colorKey, color)
+            putExtra("id", id)
 
             setResult(RESULT_OK, this)
         }
