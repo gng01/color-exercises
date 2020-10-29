@@ -9,6 +9,7 @@ import android.view.View.generateViewId
 import android.widget.GridLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.marginStart
 import kotlinx.android.synthetic.main.activity_edit_palette.*
 
 class EditPaletteActivity : AppCompatActivity() {
@@ -40,7 +41,7 @@ class EditPaletteActivity : AppCompatActivity() {
         )
 
         view.setBackgroundColor(Color.parseColor(color))
-        view.height = 100
+        view.height = 500
 
         val triggerColor = getBgColor(view)
 
