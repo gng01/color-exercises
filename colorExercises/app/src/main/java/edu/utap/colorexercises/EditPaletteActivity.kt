@@ -48,7 +48,7 @@ class EditPaletteActivity : AppCompatActivity() {
             val intent = Intent(this, EditColorActivity::class.java)
             val extras = Bundle()
             extras.putInt(EditColorActivity.originalColorKey, triggerColor)
-            extras.putInt("id", id)
+            extras.putInt(EditColorActivity.viewIdKey, id)
 
             intent.putExtras(extras)
             val result = 1
@@ -71,7 +71,7 @@ class EditPaletteActivity : AppCompatActivity() {
 
         data?.extras?.apply{
             val color = getInt(EditColorActivity.colorKey)
-            val id = getInt("id")
+            val id = getInt(EditColorActivity.viewIdKey)
 
             val view = findViewById<TextView>(id)
             view.setBackgroundColor(color)

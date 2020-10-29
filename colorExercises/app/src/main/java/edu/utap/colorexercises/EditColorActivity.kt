@@ -21,6 +21,7 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
     companion object {
         val originalColorKey = "originalColor"
         val colorKey = "editcolor"
+        val viewIdKey = "viewIdKey"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +47,7 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
         val sourceIntent = intent
         val sourceBundle = sourceIntent.extras
         val originalColor = sourceBundle?.getInt(originalColorKey)
-        this.id = sourceBundle?.getInt("id")!!
+        this.id = sourceBundle?.getInt(viewIdKey)!!
 
         picker = findViewById<View>(R.id.picker) as ColorPicker
 
@@ -58,7 +59,7 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
     fun onFinish(id: Int, color: Int) {
         Intent().apply{
             putExtra(colorKey, color)
-            putExtra("id", id)
+            putExtra(viewIdKey, id)
 
             setResult(RESULT_OK, this)
         }
