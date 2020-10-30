@@ -36,14 +36,6 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
     override fun onStart() {
         super.onStart()
 
-        // this will get moved to the adapter so that we pass through a list of colors (palette)
-        editPalette.setOnClickListener{
-            val intent = Intent(activity, EditPaletteActivity::class.java)
-            val extras = Bundle()
-            intent.putExtras(extras)
-            val result = 1
-            startActivityForResult(intent, result)
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -67,7 +59,7 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
     private fun initializePalettes() : List<Palette> {
         val p1 = Palette()
         p1.name = "my palette"
-        p1.colors = mutableListOf<String>("#333333", "#555555", "#888888", "#AAAAAA")
+        p1.colors = mutableListOf<String>("#FF3333", "#555555", "#888888", "#AAAAAA")
 
         val p2 = Palette()
         p2.name = "grayscale"

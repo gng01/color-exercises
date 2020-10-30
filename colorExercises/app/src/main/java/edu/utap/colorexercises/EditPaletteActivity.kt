@@ -18,9 +18,13 @@ class EditPaletteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_palette)
 
-        val colors = listOf<String>("#333333", "#555555", "#888888", "#AAAAAA")
+        val sourceIntent = intent
+        val sourceBundle = sourceIntent.extras
+        val palette = sourceBundle?.getStringArray("palette")
 
-        populateColors(colors)
+        val colors = palette
+
+        colors?.toList()?.let { populateColors(it) }
     }
 
     private fun populateColors(colors: List<String>) {

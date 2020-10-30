@@ -17,14 +17,6 @@
         android:padding="25dp"
         android:textSize="30dp"></TextView>
 
-    <TextView
-        android:id="@+id/editPalette"
-        android:layout_height="50dp"
-        android:layout_width="wrap_content"
-        android:background="#FFFF00"
-        android:text="CLICK ME\ncolor picker test">
-    </TextView>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/palette_list"
         android:layout_width="match_parent"

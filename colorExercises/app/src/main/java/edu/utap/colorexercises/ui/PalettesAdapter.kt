@@ -1,19 +1,24 @@
 package edu.utap.colorexercises.ui
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import edu.utap.colorexercises.EditPaletteActivity
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.Palette
+import kotlinx.android.synthetic.main.fragment_mypalettes.*
 import kotlinx.android.synthetic.main.fragment_mypalettes.view.*
 import kotlinx.android.synthetic.main.palette_list_item.view.*
 import kotlin.random.Random
@@ -24,11 +29,22 @@ class PalettesAdapter(private val context: Context, private val palettes: List<P
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private var nameView = view.findViewById<TextView>(R.id.name)
         val colorsView = view.findViewById<LinearLayout>(R.id.colors)
+        var palette : Palette? = null
 
         init {
+            view.setOnClickListener{
+                val intent = Intent(context, EditPaletteActivity::class.java)
+                val extras = Bundle()
+                extras.putStringArray("palette", palette?.colors?.toTypedArray())
+                intent.putExtras(extras)
+                val result = 1
+                context.startActivity(intent)
+            }
         }
 
         fun bind(position: Int) {
+            palette = palettes[position]
+
             nameView.text = palettes[position].name
 
             palettes[position].colors.forEach {
