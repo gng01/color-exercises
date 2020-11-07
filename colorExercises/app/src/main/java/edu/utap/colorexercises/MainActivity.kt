@@ -1,17 +1,28 @@
 package edu.utap.colorexercises
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.FragmentTransaction
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.IdpResponse
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import edu.utap.colorexercises.ui.HomeFragment
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var homeFragment: HomeFragment
+    companion object {
+        const val TAG = "ColorExercises"
+    }
+
 
     private fun initHomeFragment() {
         supportFragmentManager
@@ -25,6 +36,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
+
+
+        val authInitIntent = Intent(this, AuthInitActivity::class.java)
+        startActivity(authInitIntent)
 
         homeFragment = HomeFragment.newInstance()
         initHomeFragment()
@@ -45,5 +60,10 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.d(javaClass.simpleName, "onActivityResult")
     }
 }

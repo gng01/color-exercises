@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "619196598693",
+    "firebase_url": "https://colorexercises.firebaseio.com",
+    "project_id": "colorexercises",
+    "storage_bucket": "colorexercises.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619196598693:android:e57a0aef742315404bc04c",
+        "android_client_info": {
+          "package_name": "edu.utap.colorexercises"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "619196598693-1q9ij384kvnnvcr7457lupdv4o4a6c4l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcmGdYzyER8JL1uXaijp-_Zcex5GFTMz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "619196598693-1q9ij384kvnnvcr7457lupdv4o4a6c4l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
