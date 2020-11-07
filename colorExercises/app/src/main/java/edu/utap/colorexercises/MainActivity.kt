@@ -9,12 +9,15 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import edu.utap.colorexercises.model.MainViewModel
 import edu.utap.colorexercises.ui.HomeFragment
 
 class MainActivity : AppCompatActivity() {
@@ -22,7 +25,17 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val TAG = "ColorExercises"
     }
+    private val viewModel: MainViewModel by viewModels()
 
+    private fun initUserUI() {
+        viewModel.observeFirebaseAuthLiveData().observe(this, Observer {
+            if( it == null ) {
+                Log.d(TAG, "No one is signed in")
+            } else {
+                Log.d(TAG, "${it.displayName} ${it.email} ${it.uid} signed in")
+            }
+        })
+    }
 
     private fun initHomeFragment() {
         supportFragmentManager
@@ -37,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-
+        initUserUI()
         val authInitIntent = Intent(this, AuthInitActivity::class.java)
         startActivity(authInitIntent)
 
