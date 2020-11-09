@@ -84,7 +84,7 @@ class HomeFragment :
             initUserUI()
             initAuth()
             initSignOut(btnSignIn)
-            
+
         }
     }
 
