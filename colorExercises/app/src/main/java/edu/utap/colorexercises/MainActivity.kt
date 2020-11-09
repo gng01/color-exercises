@@ -27,15 +27,6 @@ class MainActivity : AppCompatActivity() {
     }
     private val viewModel: MainViewModel by viewModels()
 
-    private fun initUserUI() {
-        viewModel.observeFirebaseAuthLiveData().observe(this, Observer {
-            if( it == null ) {
-                Log.d(TAG, "No one is signed in")
-            } else {
-                Log.d(TAG, "${it.displayName} ${it.email} ${it.uid} signed in")
-            }
-        })
-    }
 
     private fun initHomeFragment() {
         supportFragmentManager
@@ -50,9 +41,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        initUserUI()
-        val authInitIntent = Intent(this, AuthInitActivity::class.java)
-        startActivity(authInitIntent)
 
         homeFragment = HomeFragment.newInstance()
         initHomeFragment()

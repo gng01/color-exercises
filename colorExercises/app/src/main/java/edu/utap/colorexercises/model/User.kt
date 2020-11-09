@@ -1,6 +1,12 @@
 package edu.utap.colorexercises.model
 
-class User {
-    var id : Int = 0
-    lateinit var name : String
-}
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.ServerTimestamp
+
+data class User(
+    var id: String? = null,
+    var name: String? = null,
+    @ServerTimestamp val timeStamp: Timestamp? = null,
+
+    var modes: MutableMap<String, Int> = mutableMapOf()
+)
