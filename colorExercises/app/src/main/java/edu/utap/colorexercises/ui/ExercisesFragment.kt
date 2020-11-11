@@ -7,12 +7,13 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.ogaclejapan.arclayout.ArcLayout
-import edu.utap.colorexercises.MainActivity
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.ExerciseMode
 import edu.utap.colorexercises.model.ExerciseModesRepository
 import edu.utap.colorexercises.model.ExerciseSet
+import edu.utap.colorexercises.model.MainViewModel
 
 /**
  * Exercise Fragment that handles view bindings
@@ -20,7 +21,7 @@ import edu.utap.colorexercises.model.ExerciseSet
  */
 class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
-    private val debug = false
+    private val debug = true
 
     val modesList = ExerciseModesRepository().fetchModesList()
     //val modeMapName2ID = modesList.map{it.displayName to it.id}.toMap()//mapOf("Match Value" to "MATCHVALUE","Match Hue" to "MATCHHUE")
@@ -44,7 +45,9 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private lateinit var levelsSpinner: Spinner
     private lateinit var modesSpinner: Spinner
     private var levelsMap = mutableMapOf<ExerciseMode,MutableList<Int>>(mode to levelsArray)
+    private val viewModel: MainViewModel by viewModels()
 
+    private val TAG = "ExercisesFragment"
 
     companion object {
         val refreshKey = "RefreshKey"
@@ -103,11 +106,10 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             levelsMap[this.mode]!!.apply {
                 if(!this.contains(level)) {
                     this.add(level)
-
-
                 }
             }
         }
+        viewModel.setMode(this.mode.id,level)
         levelsArray = levelsMap[this.mode]!!
         //Log.d("XXX ExercisesFragment: updateLevels", "levelsArray: ${levelsArray.toList()}, ${levelsArray.last()}")
         levelsAdapter!!.notifyDataSetChanged()
@@ -127,8 +129,14 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     private fun initLevelsMap(){
         for (value in modesList){//modeMap.values){
-            levelsMap[value] = mutableListOf(0)
+            levelsMap[value] = viewModel.getModeLevels(value.id)
         }
+        if (this.levelsMap[this.mode]!=null){
+            this.levelsArray = this.levelsMap[this.mode]!!
+        }
+
+        //Log.d(TAG,"Levelsmap ${levelsMap}")
+
     }
 
     private fun initExerciseSet(){
@@ -273,6 +281,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
         initLevelsSpinner(view)
         initModesSpinner(view)
+        updateLevels(levelsArray[levelsArray.lastIndex])
         initChildButtons(view)
         BindMainColor(view)
         SetTitle(view)

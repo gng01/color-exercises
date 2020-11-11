@@ -14,7 +14,6 @@ import edu.utap.colorexercises.AuthInitActivity
 import edu.utap.colorexercises.MainActivity
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.MainViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 
 class HomeFragment :
     Fragment(R.layout.fragment_home) {
@@ -44,7 +43,9 @@ class HomeFragment :
         viewModel.observeFirebaseAuthLiveData().observe(viewLifecycleOwner, Observer {
             currentUser = it
             val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
+            viewModel.getUser()
             toolbar.title = currentUser?.displayName
+
         })
     }
 
@@ -75,7 +76,12 @@ class HomeFragment :
                 .addToBackStack(null)
                 .commit()
         }
-        initSignIn(btnSignIn)
+        if (currentUser!=null){
+            btnSignIn.text = "Sign Out"
+            initSignOut(btnSignIn)
+        }else{
+            initSignIn(btnSignIn)
+        }
     }
 
     private fun initSignIn(btnSignIn: Button){

@@ -5,7 +5,6 @@ import com.google.firebase.firestore.ServerTimestamp
 
 data class User(
     var id: String? = null,
-    var name: String? = null,
     @ServerTimestamp val timeStamp: Timestamp? = null,
 
     var modes: MutableMap<String, Int> = mutableMapOf()

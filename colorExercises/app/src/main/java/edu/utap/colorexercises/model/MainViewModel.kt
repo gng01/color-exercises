@@ -19,6 +19,7 @@ class MainViewModel(application: Application,
 )
     : AndroidViewModel(application) {
     companion object {
+        private var user = User()
     }
     private val appContext = getApplication<Application>().applicationContext
     private var storageDir =
@@ -28,19 +29,95 @@ class MainViewModel(application: Application,
     private lateinit var crashMe: String
     private var palettes = MutableLiveData<List<Palette>>()
 
+    private var TAG = "MainViewModel"
+
 
     fun observeFirebaseAuthLiveData(): LiveData<FirebaseUser?> {
         return firebaseAuthLiveData
     }
-    private fun myUid(): String? {
+    private fun cloudUid(): String? {
         return firebaseAuthLiveData.value?.uid
     }
+    private fun cloudUserName(): String? {
+        return firebaseAuthLiveData.value?.displayName
+    }
+
     fun signOut() {
         FirebaseAuth.getInstance().signOut()
     }
 
+
+
     fun observePalettes(): LiveData<List<Palette>>{
         return palettes
+    }
+
+
+    fun getUser(){
+        user.id = cloudUid()
+        if (user.id==null){
+            Log.d(TAG,"getUser Failed: no user logged in")
+            return
+        }
+        //If the document does not exist, it will be created.
+        // If the document does exist, its contents will be overwritten
+        // with the newly provided data
+        val userRef = db.collection("users").document(user.id!!)
+        userRef.get()
+            . addOnSuccessListener {
+                if (it?.toObject(User::class.java) != null){
+                    user = it.toObject(User::class.java)!!
+
+                }else{
+                    updateUser()
+                }
+                Log.d(
+                    javaClass.simpleName,
+                    "getUser id: ${user.id}"
+                )
+            }
+            .addOnFailureListener { e ->
+                Log.d(TAG, "getUser FAILED")
+                Log.w(TAG, "Error ", e)
+            }
+
+    }
+
+
+    private fun updateUser(){
+        if (user.id==null){
+            Log.d(TAG,"createUser Failed: no user logged in")
+            return
+        }
+        db.collection("users")
+            .document(user.id!!)
+            .set(user)
+            .addOnSuccessListener {
+                Log.d(
+                    TAG,
+                    "updateUser success, id: ${user.id}"
+                )
+                getAllPalettes()
+            }
+            .addOnFailureListener { e ->
+                Log.d(TAG, "createUser FAILED")
+                Log.w(TAG, "Error ", e)
+            }
+    }
+
+    fun getModeLevels(mode: String): MutableList<Int> {
+        return if (user.modes.containsKey(mode)){
+            (0..user.modes[mode]!!).toMutableList()
+        }else{
+            mutableListOf(0)
+        }
+    }
+
+    fun setMode(mode: String, level: Int){
+        if (user.modes[mode]==null||user.modes[mode]!! <level){
+            user.modes[mode] = level
+            updateUser()
+        }
     }
 
     fun savePalette(palette: Palette){
@@ -63,15 +140,16 @@ class MainViewModel(application: Application,
                 getAllPalettes()
             }
             .addOnFailureListener { e ->
-                Log.d(javaClass.simpleName, "savePalette FAILED")
-                Log.w(javaClass.simpleName, "Error ", e)
+                Log.d(TAG, "savePalette FAILED")
+                Log.w(TAG, "Error ", e)
             }
     }
+
 
     fun getAllPalettes(){
         // get list of palettes from database
         if(FirebaseAuth.getInstance().currentUser == null) {
-            Log.d(javaClass.simpleName, "Can't get chat, no one is logged in")
+            Log.d(javaClass.simpleName, "Can't get Palettes, no one is logged in")
             palettes.value = listOf()
             return
         }
