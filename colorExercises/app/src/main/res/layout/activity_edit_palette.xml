@@ -19,4 +19,11 @@
         android:columnCount="2"
         android:id="@+id/palette_colors">
     </GridLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/saveTrigger"
+        android:text="Save Palette">
+    </Button>
 </LinearLayout>

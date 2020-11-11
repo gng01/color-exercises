@@ -8,11 +8,16 @@ import android.view.View
 import android.view.View.generateViewId
 import android.widget.GridLayout
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.marginStart
+import edu.utap.colorexercises.model.MainViewModel
+import edu.utap.colorexercises.model.Palette
 import kotlinx.android.synthetic.main.activity_edit_palette.*
 
 class EditPaletteActivity : AppCompatActivity() {
+    private val viewModel: MainViewModel by viewModels()
+    private var palette = Palette()
+    private var colorData = HashMap<Int, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,11 +25,20 @@ class EditPaletteActivity : AppCompatActivity() {
 
         val sourceIntent = intent
         val sourceBundle = sourceIntent.extras
-        val palette = sourceBundle?.getStringArray("palette")
-
-        val colors = palette
+        val colors = sourceBundle?.getStringArray("palette")
 
         colors?.toList()?.let { populateColors(it) }
+
+        palette.colors = colors?.toMutableList() ?: mutableListOf<String>()
+
+        initSave()
+    }
+
+    private fun initSave() {
+        saveTrigger.setOnClickListener {
+            palette.colors = ArrayList<String>(colorData.values);
+            viewModel.savePalette(palette)
+        }
     }
 
     private fun populateColors(colors: List<String>) {
@@ -60,7 +74,14 @@ class EditPaletteActivity : AppCompatActivity() {
             startActivityForResult(intent, result)
         }
 
+        registerColorData(id, color)
+
         return view;
+    }
+
+    private fun registerColorData(id: Int, color: String) {
+        // need data to go along with color views. used for saving
+        colorData[id] = color
     }
 
     override fun onStart() {
@@ -80,6 +101,8 @@ class EditPaletteActivity : AppCompatActivity() {
 
             val view = findViewById<TextView>(id)
             view.setBackgroundColor(color)
+
+            registerColorData(id, String.format("#%06X", 0xFFFFFF and color))
         }
     }
 }
