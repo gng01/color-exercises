@@ -38,6 +38,7 @@ class EditPaletteActivity : AppCompatActivity() {
     private fun initSaveTrigger() {
         saveTrigger.setOnClickListener {
             palette.colors = ArrayList<String>(colorData.values)
+            palette.name = name.text.toString()
             palette.keywords = tags.text.split(",").map { it -> it.trim() }.toMutableList()
 
             viewModel.savePalette(palette)

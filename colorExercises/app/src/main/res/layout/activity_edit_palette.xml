@@ -23,6 +23,19 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/nameLabel"
+        android:text="Palette Name">
+    </TextView>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/name">
+    </EditText>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:id="@+id/tagsLabel"
         android:text="Keywords">
     </TextView>
