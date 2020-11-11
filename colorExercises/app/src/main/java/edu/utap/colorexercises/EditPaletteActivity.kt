@@ -42,6 +42,9 @@ class EditPaletteActivity : AppCompatActivity() {
             palette.keywords = tags.text.split(",").map { it -> it.trim() }.toMutableList()
 
             viewModel.savePalette(palette)
+
+            // to do: add this as a call back after save confirmed as successful
+            finish()
         }
     }
 
