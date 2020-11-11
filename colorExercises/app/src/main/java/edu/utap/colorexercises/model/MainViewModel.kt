@@ -85,6 +85,8 @@ class MainViewModel(application: Application,
 
 
     private fun updateUser(){
+        //TODO:
+        // BUG sometimes happen: when signed in modes is overriden to 0
         if (user.id==null){
             Log.d(TAG,"createUser Failed: no user logged in")
             return

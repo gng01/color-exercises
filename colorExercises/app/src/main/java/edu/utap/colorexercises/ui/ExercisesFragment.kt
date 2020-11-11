@@ -176,7 +176,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         modesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 //TODO: had bug when switching from MATCHHUE to MATCHVALUE: index out of bound: index 5 for size 5
-                // however, not able to reproduce
+                // when in MATCHHUE update level to +=1 and (afterwards) MATCHHUE level<MatchVALUE level
                 if (modesList.find { it.displayName== displaynamesArray[p2]}?.id==mode.id) return //modeMapName2ID[displaynamesArray[p2]]==mode) return
                 mode = modesList.find { it.displayName== displaynamesArray[p2]}?: error("mode doesn't exist")
                 if (levelsMap[mode]==null){
