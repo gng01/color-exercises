@@ -274,6 +274,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.getUser()
         setDebugMode()
         initLevelsMap()
     }
@@ -281,6 +282,8 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
 
         initProgressBar(view)
         initExerciseSet()
