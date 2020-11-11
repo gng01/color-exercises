@@ -47,7 +47,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private var levelsMap = mutableMapOf<ExerciseMode,MutableList<Int>>(mode to levelsArray)
     private val viewModel: MainViewModel by viewModels()
 
-    private val TAG = "ExercisesFragment"
+    private val TAG = "XXX ExercisesFragment"
 
     companion object {
         val refreshKey = "RefreshKey"
@@ -113,9 +113,17 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         levelsArray = levelsMap[this.mode]!!
         //Log.d("XXX ExercisesFragment: updateLevels", "levelsArray: ${levelsArray.toList()}, ${levelsArray.last()}")
         levelsAdapter!!.notifyDataSetChanged()
+        //had to add the following line because notifyDataSetChanged() is not always working
+        // this takes more resources but is only required under rare occasion, thus tolerable
+        if (levelsSpinner.count!=levelsArray.size){
+            levelsAdapter = ArrayAdapter(this.requireContext(), R.layout.spinner_row,levelsArray)
+            levelsAdapter!!.notifyDataSetChanged()
+            levelsSpinner.adapter = levelsAdapter
+        }
         levelsSpinner.post(Runnable {
             kotlin.run { levelsSpinner.setSelection(levelsArray.last()) }
         })
+
         this.level = level
 
     }
@@ -175,8 +183,6 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         modesSpinner.adapter = modesAdapter
         modesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                //TODO: had bug when switching from MATCHHUE to MATCHVALUE: index out of bound: index 5 for size 5
-                // when in MATCHHUE update level to +=1 and (afterwards) MATCHHUE level<MatchVALUE level
                 if (modesList.find { it.displayName== displaynamesArray[p2]}?.id==mode.id) return //modeMapName2ID[displaynamesArray[p2]]==mode) return
                 mode = modesList.find { it.displayName== displaynamesArray[p2]}?: error("mode doesn't exist")
                 if (levelsMap[mode]==null){

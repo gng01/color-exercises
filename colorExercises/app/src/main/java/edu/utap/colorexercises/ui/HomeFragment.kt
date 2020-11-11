@@ -100,6 +100,8 @@ class HomeFragment :
                 viewModel.signOut()
                 btnSignIn.text = "Sign In"
                 initSignIn(btnSignIn)
+                val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
+                toolbar.title = "Please Sign in"
             }
         }
     }
