@@ -13,12 +13,14 @@ import androidx.appcompat.app.AppCompatActivity
 import edu.utap.colorexercises.model.MainViewModel
 import edu.utap.colorexercises.model.Palette
 import kotlinx.android.synthetic.main.activity_edit_palette.*
+import kotlin.properties.Delegates
 
 class EditPaletteActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private var palette = Palette()
     private var colorData = HashMap<Int, String>()
     private val defaultColors = mutableListOf<String>("#000000", "#555555", "#999999", "#EEEEEE")
+    private var isNewPalette = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,11 +30,19 @@ class EditPaletteActivity : AppCompatActivity() {
         val sourceBundle = sourceIntent.extras
         val colors = sourceBundle?.getStringArray("palette")
 
+        isNewPalette = colors.isNullOrEmpty()
+
+        UpdateViews()
+
         palette.colors = colors?.toMutableList() ?: defaultColors
 
         palette.colors.toList().let { populateColors(it) }
 
         initSaveTrigger()
+    }
+
+    private fun UpdateViews(){
+        heading.text = (if (isNewPalette) "Create" else "Edit") + " Palette"
     }
 
     private fun initSaveTrigger() {

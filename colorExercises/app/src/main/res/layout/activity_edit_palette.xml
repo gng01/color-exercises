@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:gravity="clip_horizontal|center"
         android:text="Edit Palette"
+        android:id="@+id/heading"
         android:textAllCaps="true"
         android:padding="25dp"
         android:textSize="30dp"></TextView>
