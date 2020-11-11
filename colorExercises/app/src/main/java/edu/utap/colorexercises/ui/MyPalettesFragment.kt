@@ -34,9 +34,7 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val palettes = initializePalettes()
-
-        initAdapter(view, palettes)
+        initAdapter(view)
 
         viewModel.getAllPalettes()
     }
@@ -54,7 +52,7 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
         }
     }
 
-    private fun initAdapter(view: View, palettes: List<Palette>) {
+    private fun initAdapter(view: View) {
         var palettesView = view.findViewById<RecyclerView>(R.id.palette_list)
 
         palettesView.layoutManager = LinearLayoutManager(requireContext())
@@ -64,13 +62,5 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
 
             palettesView.adapter = adapter
         })
-    }
-
-    private fun initializePalettes() : List<Palette> {
-        val p1 = Palette()
-        p1.name = "my palette"
-        p1.colors = mutableListOf<String>("#FF3333", "#555555", "#888888", "#AAAAAA")
-
-        return listOf<Palette>(p1)
     }
 }
