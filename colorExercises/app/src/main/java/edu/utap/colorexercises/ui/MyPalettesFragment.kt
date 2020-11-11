@@ -34,7 +34,9 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initAdapter(view)
+        viewModel.observePalettes().observe(viewLifecycleOwner, Observer {
+            initAdapter(view, it)
+        })
 
         viewModel.getAllPalettes()
     }
@@ -52,15 +54,13 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
         }
     }
 
-    private fun initAdapter(view: View) {
+    private fun initAdapter(view: View, palettes: List<Palette>) {
         var palettesView = view.findViewById<RecyclerView>(R.id.palette_list)
 
         palettesView.layoutManager = LinearLayoutManager(requireContext())
 
-        viewModel.observePalettes().observe(viewLifecycleOwner, Observer {
-            val adapter = PalettesAdapter(requireContext(), it)
+        val adapter = PalettesAdapter(requireContext(), palettes)
 
-            palettesView.adapter = adapter
-        })
+        palettesView.adapter = adapter
     }
 }
