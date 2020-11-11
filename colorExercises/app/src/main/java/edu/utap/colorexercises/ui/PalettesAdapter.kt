@@ -28,6 +28,7 @@ class PalettesAdapter(private val context: Context, private val palettes: List<P
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private var nameView = view.findViewById<TextView>(R.id.name)
+        private var tagsView = view.findViewById<TextView>(R.id.tags)
         val colorsView = view.findViewById<LinearLayout>(R.id.colors)
         var palette : Palette? = null
 
@@ -46,6 +47,8 @@ class PalettesAdapter(private val context: Context, private val palettes: List<P
             palette = palettes[position]
 
             nameView.text = palettes[position].name
+
+            tagsView.text = palettes[position].keywords.joinToString()
 
             palettes[position].colors.forEach {
                 colorsView.addView(createColorView(position, it))

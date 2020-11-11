@@ -23,13 +23,20 @@
                     android:textSize="20sp"
                     android:textAllCaps="true"></TextView>
 
+                <TextView
+                    android:id="@+id/tags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#999999"
+                    android:textSize="15sp"
+                    android:textAllCaps="true"></TextView>
+
                 <LinearLayout
                     android:id="@+id/colors"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/name"
                     android:orientation="horizontal"></LinearLayout>
-
         </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

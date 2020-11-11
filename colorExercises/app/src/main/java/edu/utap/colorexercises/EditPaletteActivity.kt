@@ -32,12 +32,14 @@ class EditPaletteActivity : AppCompatActivity() {
 
         palette.colors.toList().let { populateColors(it) }
 
-        initSave()
+        initSaveTrigger()
     }
 
-    private fun initSave() {
+    private fun initSaveTrigger() {
         saveTrigger.setOnClickListener {
-            palette.colors = ArrayList<String>(colorData.values);
+            palette.colors = ArrayList<String>(colorData.values)
+            palette.keywords = tags.text.split(",").map { it -> it.trim() }.toMutableList()
+
             viewModel.savePalette(palette)
         }
     }
