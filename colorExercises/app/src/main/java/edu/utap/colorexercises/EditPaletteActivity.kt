@@ -18,6 +18,7 @@ class EditPaletteActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private var palette = Palette()
     private var colorData = HashMap<Int, String>()
+    private val defaultColors = mutableListOf<String>("#000000", "#555555", "#999999", "#EEEEEE")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,9 +28,9 @@ class EditPaletteActivity : AppCompatActivity() {
         val sourceBundle = sourceIntent.extras
         val colors = sourceBundle?.getStringArray("palette")
 
-        colors?.toList()?.let { populateColors(it) }
+        palette.colors = colors?.toMutableList() ?: defaultColors
 
-        palette.colors = colors?.toMutableList() ?: mutableListOf<String>()
+        palette.colors.toList().let { populateColors(it) }
 
         initSave()
     }
