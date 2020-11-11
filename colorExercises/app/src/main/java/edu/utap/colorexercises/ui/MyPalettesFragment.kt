@@ -39,11 +39,24 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
         })
 
         viewModel.getAllPalettes()
+
+        initAddPaletteTrigger()
     }
 
     override fun onStart() {
         super.onStart()
 
+    }
+
+    private fun initAddPaletteTrigger() {
+        addPaletteTrigger.setOnClickListener {
+            val intent = Intent(context, EditPaletteActivity::class.java)
+            val extras = Bundle()
+            extras.putStringArray("palette", arrayOf("#000000", "#333333", "#999999", "#AAAAAA"))
+            intent.putExtras(extras)
+            val result = 1
+            this.startActivity(intent)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
