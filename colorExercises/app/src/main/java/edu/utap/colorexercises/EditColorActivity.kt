@@ -53,6 +53,8 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
 
         if (originalColor != null) {
             picker!!.oldCenterColor = originalColor
+            picker!!.setNewCenterColor(originalColor)
+            picker!!.color = originalColor
         }
     }
 
