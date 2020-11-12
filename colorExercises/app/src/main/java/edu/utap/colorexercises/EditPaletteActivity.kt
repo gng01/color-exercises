@@ -53,11 +53,12 @@ class EditPaletteActivity : AppCompatActivity() {
             palette.name = name.text.toString()
             palette.keywords = tags.text.split(",").map { it -> it.trim() }.toMutableList()
 
-            viewModel.savePalette(palette)
-
-            // to do: add this as a call back after save confirmed as successful
-            finish()
+            viewModel.savePalette(palette, { onSave() })
         }
+    }
+
+    private fun onSave() {
+        finish()
     }
 
     private fun populateColors(colors: List<String>) {

@@ -124,7 +124,7 @@ class MainViewModel(application: Application,
         }
     }
 
-    fun savePalette(palette: Palette){
+    fun savePalette(palette: Palette, callback: ()->Unit){
         Log.d(
             "HomeViewModel",
             String.format(
@@ -141,6 +141,8 @@ class MainViewModel(application: Application,
                     javaClass.simpleName,
                     "Palette create id: ${palette.id}"
                 )
+                callback()
+
                 getAllPalettes()
             }
             .addOnFailureListener { e ->
