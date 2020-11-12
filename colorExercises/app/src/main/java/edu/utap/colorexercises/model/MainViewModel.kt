@@ -10,6 +10,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import edu.utap.colorexercises.MainActivity
 
 
@@ -131,7 +132,7 @@ class MainViewModel(application: Application,
                 palette.name
             )
         )
-        palette.id = db.collection("palettes").document().id
+        palette.id = palette.id ?: db.collection("palettes").document().id
         db.collection("palettes")
             .document(palette.id)
             .set(palette)
@@ -157,7 +158,7 @@ class MainViewModel(application: Application,
             return
         }
         db.collection("palettes")
-            .orderBy("timeStamp")
+            .orderBy("timeStamp", Query.Direction.DESCENDING)
             .limit(20)
             .addSnapshotListener { querySnapshot, ex ->
                 if (ex != null) {

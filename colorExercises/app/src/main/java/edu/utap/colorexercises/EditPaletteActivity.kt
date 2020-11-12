@@ -34,6 +34,8 @@ class EditPaletteActivity : AppCompatActivity() {
 
         UpdateViews()
 
+        palette.id = sourceBundle?.getString("id").toString()
+
         palette.colors = colors?.toMutableList() ?: defaultColors
 
         palette.colors.toList().let { populateColors(it) }
