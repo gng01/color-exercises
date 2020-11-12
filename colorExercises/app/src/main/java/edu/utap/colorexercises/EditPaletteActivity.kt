@@ -81,12 +81,10 @@ class EditPaletteActivity : AppCompatActivity() {
         view.setBackgroundColor(Color.parseColor(color))
         view.height = 500
 
-        val triggerColor = getBgColor(view)
-
         view.setOnClickListener{
             val intent = Intent(this, EditColorActivity::class.java)
             val extras = Bundle()
-            extras.putInt(EditColorActivity.originalColorKey, triggerColor)
+            extras.putInt(EditColorActivity.originalColorKey, Color.parseColor(colorData[id]))
             extras.putInt(EditColorActivity.viewIdKey, id)
 
             intent.putExtras(extras)
@@ -106,10 +104,6 @@ class EditPaletteActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-    }
-
-    private fun getBgColor(view: View): Int {
-        return (view.background as ColorDrawable).color
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
