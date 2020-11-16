@@ -35,12 +35,22 @@ class EditPaletteActivity : AppCompatActivity() {
         UpdateViews()
 
         palette.id = sourceBundle?.getString("id").toString()
+        palette.name = sourceBundle?.getString("name").toString()
+        palette.keywords = sourceBundle?.getStringArray("keywords")?.toMutableList()!!
 
         palette.colors = colors?.toMutableList() ?: defaultColors
 
-        palette.colors.toList().let { populateColors(it) }
+        populate(palette)
 
         initSaveTrigger()
+    }
+
+    private fun populate(palette: Palette) {
+        name.setText(palette.name)
+
+        tags.setText(palette.keywords.joinToString())
+
+        palette.colors.toList().let { populateColors(it) }
     }
 
     private fun UpdateViews(){

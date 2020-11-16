@@ -37,6 +37,8 @@ class PalettesAdapter(private val context: Context, private val palettes: List<P
                 val intent = Intent(context, EditPaletteActivity::class.java)
                 val extras = Bundle()
                 extras.putString("id", palette?.id)
+                extras.putString("name", palette?.name)
+                extras.putStringArray("keywords", palette?.keywords?.toTypedArray())
                 extras.putStringArray("palette", palette?.colors?.toTypedArray())
                 intent.putExtras(extras)
                 val result = 1
