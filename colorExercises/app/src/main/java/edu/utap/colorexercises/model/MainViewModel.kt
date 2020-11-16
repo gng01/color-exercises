@@ -101,7 +101,7 @@ class MainViewModel(application: Application,
                     TAG,
                     "updateUser success, id: ${user.id}"
                 )
-                getAllPalettes()
+                getAllPalettes(null)
             }
             .addOnFailureListener { e ->
                 Log.d(TAG, "createUser FAILED")
@@ -134,7 +134,7 @@ class MainViewModel(application: Application,
         )
         palette.id = palette.id ?: db.collection("palettes").document().id
         db.collection("palettes")
-            .document(palette.id)
+            .document(palette.id!!)
             .set(palette)
             .addOnSuccessListener {
                 Log.d(
@@ -143,7 +143,7 @@ class MainViewModel(application: Application,
                 )
                 callback()
 
-                getAllPalettes()
+                getAllPalettes(null)
             }
             .addOnFailureListener { e ->
                 Log.d(TAG, "savePalette FAILED")
@@ -152,14 +152,21 @@ class MainViewModel(application: Application,
     }
 
 
-    fun getAllPalettes(){
+    fun getAllPalettes(userId: String?){
         // get list of palettes from database
         if(FirebaseAuth.getInstance().currentUser == null) {
             Log.d(javaClass.simpleName, "Can't get Palettes, no one is logged in")
             palettes.value = listOf()
             return
         }
-        db.collection("palettes")
+
+        var query = db.collection("palettes")
+
+        if (!userId.isNullOrEmpty()) {
+            query.whereEqualTo("UserId", userId)
+        }
+
+        query
             .orderBy("timeStamp", Query.Direction.DESCENDING)
             .limit(20)
             .addSnapshotListener { querySnapshot, ex ->

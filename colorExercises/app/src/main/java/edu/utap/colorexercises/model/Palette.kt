@@ -6,7 +6,7 @@ import com.google.firebase.firestore.ServerTimestamp
 import kotlin.collections.mutableListOf as mutableListOf
 
 data class Palette(
-    var id : String = "",
+    var id : String? = null,
     var name : String? = null,
     var keywords: MutableList<String> = mutableListOf<String>(""),
     var colors : MutableList<String> = mutableListOf<String>("#AAAAAA"),

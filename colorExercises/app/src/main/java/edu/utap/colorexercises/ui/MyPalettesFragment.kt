@@ -38,7 +38,7 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
             initAdapter(view, it)
         })
 
-        viewModel.getAllPalettes()
+        viewModel.getAllPalettes(null)
 
         initAddPaletteTrigger()
     }
