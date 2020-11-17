@@ -22,7 +22,7 @@ class EditPaletteActivity : AppCompatActivity() {
     private val defaultColors = mutableListOf<String>("#000000", "#555555", "#999999", "#EEEEEE")
     private var isNewPalette = true
 
-    fun isPaletteOwner() : Boolean {
+    private fun isPaletteOwner() : Boolean {
         return palette.ownerUserID == FirebaseAuth.getInstance().currentUser?.uid
     }
 
@@ -46,9 +46,13 @@ class EditPaletteActivity : AppCompatActivity() {
 
         initSaveTrigger()
 
-        UpdateViews()
+        initLayout()
 
         populate(palette)
+    }
+    
+    private fun initLayout() {
+        findViewById<TextView>(R.id.heading)?.text = (if (isNewPalette) "Create" else "Edit") + " Palette"
     }
 
     private fun initPalette(bundle: Bundle?) : Palette {
@@ -79,10 +83,6 @@ class EditPaletteActivity : AppCompatActivity() {
         }
 
         palette.colors.toList().let { populateColors(it) }
-    }
-
-    private fun UpdateViews(){
-        findViewById<TextView>(R.id.heading)?.text = (if (isNewPalette) "Create" else "Edit") + " Palette"
     }
 
     private fun initSaveTrigger() {
