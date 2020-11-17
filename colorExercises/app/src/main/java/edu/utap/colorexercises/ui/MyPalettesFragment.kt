@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import edu.utap.colorexercises.EditColorActivity
 import edu.utap.colorexercises.EditPaletteActivity
 import edu.utap.colorexercises.R
@@ -38,7 +39,7 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
             initAdapter(view, it)
         })
 
-        viewModel.getAllPalettes(null)
+        viewModel.getAllPalettes(FirebaseAuth.getInstance().currentUser?.uid)
 
         initAddPaletteTrigger()
     }

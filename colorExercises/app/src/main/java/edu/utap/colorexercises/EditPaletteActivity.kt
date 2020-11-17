@@ -10,6 +10,7 @@ import android.widget.GridLayout
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import edu.utap.colorexercises.model.MainViewModel
 import edu.utap.colorexercises.model.Palette
 import kotlinx.android.synthetic.main.activity_edit_palette.*
@@ -34,9 +35,9 @@ class EditPaletteActivity : AppCompatActivity() {
 
         UpdateViews()
 
-        palette.id = sourceBundle?.getString("id").toString()
-        palette.name = sourceBundle?.getString("name").toString()
-        palette.keywords = sourceBundle?.getStringArray("keywords")?.toMutableList()!!
+        palette.id = sourceBundle?.getString("id")
+        palette.name = sourceBundle?.getString("name")
+        palette.keywords = sourceBundle?.getStringArray("keywords")?.toMutableList() ?: mutableListOf<String>()
 
         palette.colors = colors?.toMutableList() ?: defaultColors
 
@@ -62,6 +63,8 @@ class EditPaletteActivity : AppCompatActivity() {
             palette.colors = ArrayList<String>(colorData.values)
             palette.name = name.text.toString()
             palette.keywords = tags.text.split(",").map { it -> it.trim() }.toMutableList()
+
+            palette.ownerUserID = FirebaseAuth.getInstance().currentUser?.uid
 
             viewModel.savePalette(palette, { onSave() })
         }

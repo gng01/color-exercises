@@ -162,22 +162,36 @@ class MainViewModel(application: Application,
 
         var query = db.collection("palettes")
 
-        if (!userId.isNullOrEmpty()) {
-            query.whereEqualTo("UserId", userId)
+        // wondering if we can re-use these blocks of code. they are the same except for one line
+        if (userId.isNullOrEmpty()) {
+            query
+                .orderBy("timeStamp", Query.Direction.DESCENDING)
+                .limit(20)
+                .addSnapshotListener { querySnapshot, ex ->
+                    if (ex != null) {
+                        Log.w(MainActivity.TAG, "listen:error", ex)
+                        return@addSnapshotListener
+                    }
+                    Log.d(MainActivity.TAG, "fetch ${querySnapshot!!.documents.size}")
+                    palettes.value = querySnapshot.documents.mapNotNull {
+                        it.toObject(Palette::class.java)
+                    }
+                }
+        } else {
+            query
+                .whereEqualTo("ownerUserID", userId) // only difference between this block of code and the one in the other condition
+                .orderBy("timeStamp", Query.Direction.DESCENDING)
+                .limit(20)
+                .addSnapshotListener { querySnapshot, ex ->
+                    if (ex != null) {
+                        Log.w(MainActivity.TAG, "listen:error", ex)
+                        return@addSnapshotListener
+                    }
+                    Log.d(MainActivity.TAG, "fetch ${querySnapshot!!.documents.size}")
+                    palettes.value = querySnapshot.documents.mapNotNull {
+                        it.toObject(Palette::class.java)
+                    }
+                }
         }
-
-        query
-            .orderBy("timeStamp", Query.Direction.DESCENDING)
-            .limit(20)
-            .addSnapshotListener { querySnapshot, ex ->
-                if (ex != null) {
-                    Log.w(MainActivity.TAG, "listen:error", ex)
-                    return@addSnapshotListener
-                }
-                Log.d(MainActivity.TAG, "fetch ${querySnapshot!!.documents.size}")
-                palettes.value = querySnapshot.documents.mapNotNull {
-                    it.toObject(Palette::class.java)
-                }
-            }
     }
 }
