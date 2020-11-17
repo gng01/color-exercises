@@ -37,14 +37,14 @@ class EditPaletteActivity : AppCompatActivity() {
 
         palette = initPalette(sourceBundle)
 
-        //initSaveTrigger()
-
         initUi(palette)
     }
 
     private fun initUi(palette: Palette) {
         // we can refactor later, but lets try sharing this activity between viewing and editing palettes
         setContentView(if (isPaletteOwner()) R.layout.activity_edit_palette else R.layout.activity_view_palette)
+
+        initSaveTrigger()
 
         UpdateViews()
 
@@ -86,15 +86,27 @@ class EditPaletteActivity : AppCompatActivity() {
     }
 
     private fun initSaveTrigger() {
-        findViewById<Button>(R.id.saveTrigger).setOnClickListener {
-            palette.colors = ArrayList<String>(colorData.values)
-            palette.name = name.text.toString()
-            palette.keywords = tags.text.split(",").map { it -> it.trim() }.toMutableList()
+        // another use of if-statement for edit vs view
+        if (isPaletteOwner())
+            findViewById<Button>(R.id.saveTrigger)?.setOnClickListener {
+                palette.colors = ArrayList<String>(colorData.values)
+                palette.name = name.text.toString()
+                palette.keywords = tags.text.split(",").map { it -> it.trim() }.toMutableList()
 
-            palette.ownerUserID = FirebaseAuth.getInstance().currentUser?.uid
+                palette.ownerUserID = FirebaseAuth.getInstance().currentUser?.uid
 
-            viewModel.savePalette(palette, { onSave() })
-        }
+                viewModel.savePalette(palette, { onSave() })
+            }
+        else
+            findViewById<Button>(R.id.copyTrigger)?.setOnClickListener {
+                palette.id = null
+
+                palette.colors = ArrayList<String>(colorData.values)
+
+                palette.ownerUserID = FirebaseAuth.getInstance().currentUser?.uid
+
+                viewModel.savePalette(palette, { onSave() })
+            }
     }
 
     private fun onSave() {

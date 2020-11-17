@@ -30,7 +30,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/saveTrigger"
-        android:text="Save Palette">
+        android:id="@+id/copyTrigger"
+        android:text="Copy Palette">
     </Button>
 </LinearLayout>
