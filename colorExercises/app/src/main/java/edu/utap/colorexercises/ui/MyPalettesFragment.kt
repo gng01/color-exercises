@@ -68,7 +68,7 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
 
         palettesView.layoutManager = LinearLayoutManager(requireContext())
 
-        val adapter = PalettesAdapter(requireContext(), palettes)
+        val adapter = UserPalettesAdapter(requireContext(), palettes)
 
         palettesView.adapter = adapter
     }

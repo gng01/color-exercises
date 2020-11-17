@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_mypalettes.view.*
 import kotlinx.android.synthetic.main.palette_list_item.view.*
 import kotlin.random.Random
 
-class PalettesAdapter(private val context: Context, private val palettes: List<Palette>)
+open class PalettesAdapter(private val context: Context, private val palettes: List<Palette>)
     : RecyclerView.Adapter<PalettesAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -71,7 +71,7 @@ class PalettesAdapter(private val context: Context, private val palettes: List<P
         holder.bind(position)
     }
 
-    private fun createColorView(index: Int, color: String): ImageView {
+    protected fun createColorView(index: Int, color: String): ImageView {
         var view = ImageView(context)
         view.layoutParams = LinearLayout.LayoutParams(150, 150)
         view.setBackgroundColor(Color.parseColor(color))
