@@ -2,10 +2,10 @@ package edu.utap.colorexercises
 
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.View
 import android.view.View.generateViewId
+import android.widget.Button
+import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.TextView
 import androidx.activity.viewModels
@@ -14,7 +14,6 @@ import com.google.firebase.auth.FirebaseAuth
 import edu.utap.colorexercises.model.MainViewModel
 import edu.utap.colorexercises.model.Palette
 import kotlinx.android.synthetic.main.activity_edit_palette.*
-import kotlin.properties.Delegates
 
 class EditPaletteActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
@@ -23,9 +22,12 @@ class EditPaletteActivity : AppCompatActivity() {
     private val defaultColors = mutableListOf<String>("#000000", "#555555", "#999999", "#EEEEEE")
     private var isNewPalette = true
 
+    fun isPaletteOwner() : Boolean {
+        return palette.ownerUserID == FirebaseAuth.getInstance().currentUser?.uid
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_edit_palette)
 
         val sourceIntent = intent
         val sourceBundle = sourceIntent.extras
@@ -33,33 +35,58 @@ class EditPaletteActivity : AppCompatActivity() {
 
         isNewPalette = colors.isNullOrEmpty()
 
+        palette = initPalette(sourceBundle)
+
+        //initSaveTrigger()
+
+        initUi(palette)
+    }
+
+    private fun initUi(palette: Palette) {
+        // we can refactor later, but lets try sharing this activity between viewing and editing palettes
+        setContentView(if (isPaletteOwner()) R.layout.activity_edit_palette else R.layout.activity_view_palette)
+
         UpdateViews()
 
-        palette.id = sourceBundle?.getString("id")
-        palette.name = sourceBundle?.getString("name")
-        palette.keywords = sourceBundle?.getStringArray("keywords")?.toMutableList() ?: mutableListOf<String>()
+        populate(palette)
+    }
+
+    private fun initPalette(bundle: Bundle?) : Palette {
+        val colors = bundle?.getStringArray("palette")
+
+        var palette = Palette()
+
+        palette.id = bundle?.getString("id")
+        palette.name = bundle?.getString("name")
+        palette.keywords = bundle?.getStringArray("keywords")?.toMutableList() ?: mutableListOf<String>()
+        palette.ownerUserID = bundle?.getString("ownerUserId")
 
         palette.colors = colors?.toMutableList() ?: defaultColors
 
-        populate(palette)
-
-        initSaveTrigger()
+        return palette
     }
 
     private fun populate(palette: Palette) {
-        name.setText(palette.name)
+        // again, not a fan of doing it this way, where we check if the user is viewing or editing
+        if (isPaletteOwner()) {
+            findViewById<EditText>(R.id.name).setText(palette.name)
 
-        tags.setText(palette.keywords.joinToString())
+            findViewById<EditText>(R.id.tags).setText(palette.keywords.joinToString())
+        } else {
+            findViewById<TextView>(R.id.name).setText(palette.name)
+
+            findViewById<TextView>(R.id.username).setText(palette.ownerUserName)
+        }
 
         palette.colors.toList().let { populateColors(it) }
     }
 
     private fun UpdateViews(){
-        heading.text = (if (isNewPalette) "Create" else "Edit") + " Palette"
+        findViewById<TextView>(R.id.heading)?.text = (if (isNewPalette) "Create" else "Edit") + " Palette"
     }
 
     private fun initSaveTrigger() {
-        saveTrigger.setOnClickListener {
+        findViewById<Button>(R.id.saveTrigger).setOnClickListener {
             palette.colors = ArrayList<String>(colorData.values)
             palette.name = name.text.toString()
             palette.keywords = tags.text.split(",").map { it -> it.trim() }.toMutableList()
@@ -113,10 +140,6 @@ class EditPaletteActivity : AppCompatActivity() {
     private fun registerColorData(id: Int, color: String) {
         // need data to go along with color views. used for saving
         colorData[id] = color
-    }
-
-    override fun onStart() {
-        super.onStart()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
