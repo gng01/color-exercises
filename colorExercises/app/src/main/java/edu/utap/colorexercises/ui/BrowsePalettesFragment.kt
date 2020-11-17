@@ -32,10 +32,17 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_mypalettes) {
             initAdapter(view, it)
         })
 
+        initLayout()
+
         viewModel.getAllPalettes(null)
 
         initAddPaletteTrigger()
     }
+
+    private fun initLayout() {
+        palettesHeading.text = "Browse Palettes"
+    }
+
     private fun initAddPaletteTrigger() {
         addPaletteTrigger.setOnClickListener {
             // copied from MyPalettes. Should do something else here

@@ -15,6 +15,7 @@
         android:text="My Palettes"
         android:textAllCaps="true"
         android:padding="25dp"
+        android:id="@+id/palettesHeading"
         android:textSize="30dp"></TextView>
 
     <androidx.recyclerview.widget.RecyclerView
