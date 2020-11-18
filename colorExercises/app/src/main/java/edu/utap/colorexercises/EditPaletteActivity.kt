@@ -93,7 +93,9 @@ class EditPaletteActivity : AppCompatActivity() {
                 palette.name = name.text.toString()
                 palette.keywords = tags.text.split(",").map { it -> it.trim() }.toMutableList()
 
-                palette.ownerUserID = FirebaseAuth.getInstance().currentUser?.uid
+                val user = FirebaseAuth.getInstance().currentUser
+                palette.ownerUserID = user?.uid
+                palette.ownerUserName = user?.displayName
 
                 viewModel.savePalette(palette, { onSave() })
             }
@@ -103,7 +105,9 @@ class EditPaletteActivity : AppCompatActivity() {
 
                 palette.colors = ArrayList<String>(colorData.values)
 
-                palette.ownerUserID = FirebaseAuth.getInstance().currentUser?.uid
+                val user = FirebaseAuth.getInstance().currentUser
+                palette.ownerUserID = user?.uid
+                palette.ownerUserName = user?.displayName
 
                 viewModel.savePalette(palette, { onSave() })
             }
