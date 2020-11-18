@@ -3,10 +3,7 @@ package edu.utap.colorexercises.model
 import android.app.Application
 import android.os.Environment
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,7 +25,8 @@ class MainViewModel(application: Application,
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private var firebaseAuthLiveData = FirestoreAuthLiveData()
     private lateinit var crashMe: String
-    private var palettes = MutableLiveData<List<Palette>>()
+    private var userPalettes = MutableLiveData<List<Palette>>()
+    private var allPalettes = listOf<Palette>()
 
     private var TAG = "MainViewModel"
 
@@ -50,7 +48,7 @@ class MainViewModel(application: Application,
 
 
     fun observePalettes(): LiveData<List<Palette>>{
-        return palettes
+        return userPalettes
     }
 
 
@@ -101,7 +99,7 @@ class MainViewModel(application: Application,
                     TAG,
                     "updateUser success, id: ${user.id}"
                 )
-                getAllPalettes(null)
+                getUserPalettes(null)
             }
             .addOnFailureListener { e ->
                 Log.d(TAG, "createUser FAILED")
@@ -133,6 +131,7 @@ class MainViewModel(application: Application,
             )
         )
         palette.id = palette.id ?: db.collection("palettes").document().id
+        palette.keywords.map { it.toLowerCase() }
         db.collection("palettes")
             .document(palette.id!!)
             .set(palette)
@@ -143,7 +142,7 @@ class MainViewModel(application: Application,
                 )
                 callback()
 
-                getAllPalettes(null)
+                getUserPalettes(null)
             }
             .addOnFailureListener { e ->
                 Log.d(TAG, "savePalette FAILED")
@@ -152,11 +151,11 @@ class MainViewModel(application: Application,
     }
 
 
-    fun getAllPalettes(userId: String?){
+    fun getUserPalettes(userId: String?){
         // get list of palettes from database
         if(FirebaseAuth.getInstance().currentUser == null) {
             Log.d(javaClass.simpleName, "Can't get Palettes, no one is logged in")
-            palettes.value = listOf()
+            userPalettes.value = listOf()
             return
         }
 
@@ -173,7 +172,7 @@ class MainViewModel(application: Application,
                         return@addSnapshotListener
                     }
                     Log.d(MainActivity.TAG, "fetch ${querySnapshot!!.documents.size}")
-                    palettes.value = querySnapshot.documents.mapNotNull {
+                    userPalettes.value = querySnapshot.documents.mapNotNull {
                         it.toObject(Palette::class.java)
                     }
                 }
@@ -188,10 +187,57 @@ class MainViewModel(application: Application,
                         return@addSnapshotListener
                     }
                     Log.d(MainActivity.TAG, "fetch ${querySnapshot!!.documents.size}")
-                    palettes.value = querySnapshot.documents.mapNotNull {
+                    userPalettes.value = querySnapshot.documents.mapNotNull {
                         it.toObject(Palette::class.java)
                     }
                 }
         }
     }
+
+    fun getAllPalettes(){
+        // get list of palettes from database
+
+        var query = db.collection("palettes")
+
+        query
+            .orderBy("timeStamp", Query.Direction.DESCENDING)
+            .limit(20)
+            .addSnapshotListener { querySnapshot, ex ->
+                if (ex != null) {
+                    Log.w(TAG, "listen:error", ex)
+                    return@addSnapshotListener
+                }
+                Log.d(TAG, "fetch ${querySnapshot!!.documents.size}")
+                allPalettes = querySnapshot.documents.mapNotNull {
+                    it.toObject(Palette::class.java)
+                }
+            }
+
+    }
+
+    private var searchTerm = MutableLiveData<String>("")
+
+    fun setSearchTerm(s: String){
+        searchTerm.value = s
+    }
+
+    private fun filterList(): List<Palette>{
+        Log.d(javaClass.simpleName,
+            "Filter ${searchTerm.value}")
+        getAllPalettes()
+        val searchTermValue = searchTerm.value!!.toLowerCase()
+        return allPalettes.        filter {
+            it.keywords.contains(searchTermValue)
+        }
+    }
+
+    private var livePalettes = MediatorLiveData<List<Palette>>().apply {
+        addSource(searchTerm){ value = filterList()}
+        value = allPalettes
+    }
+
+    fun observeLivePalettes(): LiveData<List<Palette>>{
+        return livePalettes
+    }
+
 }

@@ -4,12 +4,19 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import edu.utap.colorexercises.EditPaletteActivity
 import edu.utap.colorexercises.R
@@ -17,6 +24,7 @@ import edu.utap.colorexercises.model.Palette
 
 class SharedPalettesAdapter(private val context: Context, private val palettes: List<Palette>)
     : PalettesAdapter(context, palettes) {
+
 
     override fun onClick(palette: Palette?) {
         val intent = Intent(context, EditPaletteActivity::class.java)
