@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_mypalettes.view.*
 import kotlinx.android.synthetic.main.palette_list_item.view.*
 import kotlin.random.Random
 
-class PalettesAdapter(private val context: Context, private val palettes: List<Palette>)
+abstract class PalettesAdapter(private val context: Context, private val palettes: List<Palette>)
     : RecyclerView.Adapter<PalettesAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -34,15 +34,7 @@ class PalettesAdapter(private val context: Context, private val palettes: List<P
 
         init {
             view.setOnClickListener{
-                val intent = Intent(context, EditPaletteActivity::class.java)
-                val extras = Bundle()
-                extras.putString("id", palette?.id)
-                extras.putString("name", palette?.name)
-                extras.putStringArray("keywords", palette?.keywords?.toTypedArray())
-                extras.putStringArray("palette", palette?.colors?.toTypedArray())
-                intent.putExtras(extras)
-                val result = 1
-                context.startActivity(intent)
+                onClick(palette)
             }
         }
 
@@ -58,6 +50,8 @@ class PalettesAdapter(private val context: Context, private val palettes: List<P
             }
         }
     }
+
+    abstract fun onClick(palette: Palette?)
 
     override fun getItemCount(): Int {
         return palettes.count()
