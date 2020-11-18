@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_mypalettes.view.*
 import kotlinx.android.synthetic.main.palette_list_item.view.*
 import kotlin.random.Random
 
-open class PalettesAdapter(private val context: Context, private val palettes: List<Palette>)
+class PalettesAdapter(private val context: Context, private val palettes: List<Palette>)
     : RecyclerView.Adapter<PalettesAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

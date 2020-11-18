@@ -23,7 +23,7 @@ class EditPaletteActivity : AppCompatActivity() {
     private var isNewPalette = true
 
     private fun isPaletteOwner() : Boolean {
-        return palette.ownerUserID == FirebaseAuth.getInstance().currentUser?.uid
+        return palette.ownerUserID == null || palette.ownerUserID == FirebaseAuth.getInstance().currentUser?.uid
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
