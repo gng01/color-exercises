@@ -27,10 +27,8 @@ abstract class PalettesAdapter(private val context: Context, private val palette
     : RecyclerView.Adapter<PalettesAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private var nameView = view.findViewById<TextView>(R.id.name)
-        private var tagsView = view.findViewById<TextView>(R.id.tags)
-        val colorsView = view.findViewById<LinearLayout>(R.id.colors)
         var palette : Palette? = null
+        val view = view
 
         init {
             view.setOnClickListener{
@@ -41,23 +39,21 @@ abstract class PalettesAdapter(private val context: Context, private val palette
         fun bind(position: Int) {
             palette = palettes[position]
 
-            nameView.text = palettes[position].name
-
-            tagsView.text = palettes[position].keywords.joinToString()
-
-            palettes[position].colors.forEach {
-                colorsView.addView(createColorView(position, it))
-            }
+            bind(view, palette)
         }
     }
 
     abstract fun onClick(palette: Palette?)
 
+    abstract fun bind(view: View, palette: Palette?)
+
+    abstract fun getLayoutId() : Int
+
     override fun getItemCount(): Int {
         return palettes.count()
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.palette_list_item, parent, false)
+        val view = LayoutInflater.from(context).inflate(getLayoutId(), parent, false)
         return ViewHolder(view)
     }
 

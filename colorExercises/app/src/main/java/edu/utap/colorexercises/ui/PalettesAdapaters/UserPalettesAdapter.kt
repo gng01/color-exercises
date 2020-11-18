@@ -30,4 +30,21 @@ class UserPalettesAdapter(private val context: Context, private val palettes: Li
         val result = 1
         context.startActivity(intent)
     }
+
+    override fun getLayoutId(): Int {
+        return R.layout.user_palette_list_item
+    }
+
+    override fun bind(view: View, palette: Palette?) {
+        val nameView = view.findViewById<TextView>(R.id.name)
+        val tagsView = view.findViewById<TextView>(R.id.tags)
+        val colorsView = view.findViewById<LinearLayout>(R.id.colors)
+
+        nameView.text = palette?.name
+        tagsView.text = palette?.keywords?.joinToString()
+
+        palette?.colors?.forEach {
+            colorsView.addView(createColorView(0, it))
+        }
+    }
 }

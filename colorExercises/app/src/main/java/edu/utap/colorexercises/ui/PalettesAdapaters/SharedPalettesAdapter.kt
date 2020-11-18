@@ -23,11 +23,31 @@ class SharedPalettesAdapter(private val context: Context, private val palettes: 
         val extras = Bundle()
         extras.putString("id", palette?.id)
         extras.putString("name", palette?.name)
+        extras.putString("username", palette?.ownerUserName)
         extras.putString("ownerUserId", palette?.ownerUserID)
         extras.putStringArray("keywords", palette?.keywords?.toTypedArray())
         extras.putStringArray("palette", palette?.colors?.toTypedArray())
         intent.putExtras(extras)
         val result = 1
         context.startActivity(intent)
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.palette_list_item
+    }
+
+    override fun bind(view: View, palette: Palette?) {
+        val nameView = view.findViewById<TextView>(R.id.name)
+        val usernameView = view.findViewById<TextView>(R.id.username)
+        val tagsView = view.findViewById<TextView>(R.id.tags)
+        val colorsView = view.findViewById<LinearLayout>(R.id.colors)
+
+        nameView.text = palette?.name
+        usernameView.text = palette?.ownerUserName
+        tagsView.text = palette?.keywords?.joinToString()
+
+        palette?.colors?.forEach {
+            colorsView.addView(createColorView(0, it))
+        }
     }
 }
