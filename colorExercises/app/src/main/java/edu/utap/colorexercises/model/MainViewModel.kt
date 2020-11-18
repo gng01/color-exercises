@@ -36,10 +36,10 @@ class MainViewModel(application: Application,
     fun observeFirebaseAuthLiveData(): LiveData<FirebaseUser?> {
         return firebaseAuthLiveData
     }
-    private fun cloudUid(): String? {
+    fun cloudUid(): String? {
         return firebaseAuthLiveData.value?.uid
     }
-    private fun cloudUserName(): String? {
+    fun cloudUserName(): String? {
         return firebaseAuthLiveData.value?.displayName
     }
 
@@ -138,7 +138,7 @@ class MainViewModel(application: Application,
             .set(palette)
             .addOnSuccessListener {
                 Log.d(
-                    javaClass.simpleName,
+                    TAG,
                     "Palette create id: ${palette.id}"
                 )
                 callback()

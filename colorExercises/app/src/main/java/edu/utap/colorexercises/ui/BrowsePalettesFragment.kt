@@ -8,16 +8,18 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import edu.utap.colorexercises.EditPaletteActivity
+import com.google.firebase.auth.FirebaseAuth
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.MainViewModel
 import edu.utap.colorexercises.model.Palette
-import kotlinx.android.synthetic.main.fragment_mypalettes.*
+import kotlinx.android.synthetic.main.fragment_browse_palettes.*
+import kotlinx.android.synthetic.main.fragment_mypalettes.palettesHeading
+import java.util.concurrent.ThreadLocalRandom
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class BrowsePalettesFragment : Fragment(R.layout.fragment_mypalettes) {
+class BrowsePalettesFragment : Fragment(R.layout.fragment_browse_palettes) {
     private val viewModel: MainViewModel by viewModels()
 
     companion object {
@@ -43,11 +45,53 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_mypalettes) {
         palettesHeading.text = "Browse Palettes"
     }
 
+    private fun generateRandomPalette(){
+        //Function for adding and saving many palettes for testing
+        fun randomKeywords(numKeywords: Int): MutableList<String> {
+            val keywordsBase = listOf<String>(
+                "autumn",
+                "winter",
+                "summer",
+                "spring",
+                "beautiful",
+                "dark",
+                "bright",
+                "light"
+            )
+            val randomKeywords = mutableListOf<String>()
+            for (i in 0..numKeywords){
+                randomKeywords.add(
+                    keywordsBase[ThreadLocalRandom.current()
+                        .nextInt(keywordsBase.size)]
+                )
+            }
+            return randomKeywords
+        }
+        fun randomColors(numColors: Int): MutableList<String> {
+            val randomColors = mutableListOf<String>()
+            for (i in 0..numColors){
+                val color = (Math.random() * 16777215).toInt() or (0xFF shl 24)
+                val hexColor = java.lang.String.format("#%06X", 0xFFFFFF and color)
+                randomColors.add(hexColor)
+            }
+            return randomColors
+        }
+
+        val numKeywords = 4
+        val numColors = 6
+        val palette = Palette()
+        palette.ownerUserID = FirebaseAuth.getInstance().currentUser?.uid
+        palette.ownerUserName = FirebaseAuth.getInstance().currentUser?.displayName
+        palette.colors = randomColors(numColors)
+        palette.keywords = randomKeywords(numKeywords)
+        palette.name = palette.keywords.joinToString(" ")
+        viewModel.savePalette(palette, { callBack() })
+
+    }
     private fun initAddPaletteTrigger() {
-        addPaletteTrigger.setOnClickListener {
+        randomPalette.setOnClickListener {
             // copied from MyPalettes. Should do something else here
-            val intent = Intent(context, EditPaletteActivity::class.java)
-            this.startActivity(intent)
+            generateRandomPalette()
         }
     }
 
@@ -57,6 +101,9 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_mypalettes) {
         data?.extras?.apply{
 
         }
+    }
+
+    private fun callBack() {
     }
 
     private fun initAdapter(view: View, palettes: List<Palette>) {
