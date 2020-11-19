@@ -17,6 +17,16 @@ import edu.utap.colorexercises.model.MainViewModel
 
 class HomeFragment :
     Fragment(R.layout.fragment_home) {
+    /*
+
+    TODO [Added by Arky 1118]:
+        1. Add user name change page
+        2. Add save to my palettes option if i'm not the owner
+        3. Create one more game mode
+        4. Link colors in ExerciseFragment to Add to MyPalettesFragment
+        5. Add ArcLayout Animation in ExerciseFragment
+
+     */
     private var currentUser: FirebaseUser? = null
     private val viewModel: MainViewModel by activityViewModels()
     companion object {
