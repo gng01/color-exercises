@@ -26,7 +26,7 @@ class MainViewModel(application: Application,
     private var firebaseAuthLiveData = FirestoreAuthLiveData()
     private lateinit var crashMe: String
     private var userPalettes = MutableLiveData<List<Palette>>()
-    private var allPalettes = listOf<Palette>()
+    var allPalettes = listOf<Palette>()
 
     private var TAG = "MainViewModel"
 
@@ -226,6 +226,9 @@ class MainViewModel(application: Application,
             "Filter ${searchTerm.value}")
         getAllPalettes()
         val searchTermValue = searchTerm.value!!.toLowerCase()
+        if (searchTerm==null || searchTerm.value==null || searchTerm.value!!.isEmpty()){
+            return allPalettes
+        }
         return allPalettes.        filter {
             it.keywords.contains(searchTermValue)
         }

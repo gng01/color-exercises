@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -21,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 
 class SettingsFragment :
     Fragment(R.layout.fragment_settings) {
-    val TAG = "SettingsFragment"
+    private val TAG = "SettingsFragment"
     companion object {
         const val idKey = "idKey"
         fun newInstance(): SettingsFragment {
@@ -37,6 +38,8 @@ class SettingsFragment :
             parentFragmentManager.popBackStack()
         }
         submitNameButton.setOnClickListener {
+            (activity as MainActivity).hideKeyboard()
+
             val enteredName = enterNameET.text.toString()
             val firebaseAuth = FirebaseAuth.getInstance();
             val user = firebaseAuth.currentUser
@@ -44,8 +47,13 @@ class SettingsFragment :
                 val profileUpdates = UserProfileChangeRequest.Builder()
                     .setDisplayName(enteredName).build();
                 user?.updateProfile(profileUpdates)?.addOnCompleteListener {
+                    Log.d(TAG, "Submission Completed");
                     if (it.isSuccessful) {
-                        Log.d(TAG, FirebaseAuth.getInstance().getCurrentUser()?.getDisplayName());
+                        Log.d(TAG, "Submission successful");
+                        parentFragmentManager.popBackStack()
+
+                    }else{
+                        Toast.makeText(context, "Submission Failed, please try again", Toast.LENGTH_LONG)
                     }
 
                 }

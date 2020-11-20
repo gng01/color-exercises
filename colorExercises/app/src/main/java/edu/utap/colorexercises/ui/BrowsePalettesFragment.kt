@@ -24,7 +24,6 @@ import kotlinx.android.synthetic.main.fragment_mypalettes.*
  */
 class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
     private val viewModel: MainViewModel by viewModels()
-
     companion object {
         fun newInstance(): BrowsePalettesFragment {
             return BrowsePalettesFragment()
@@ -32,10 +31,11 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewModel.observeLivePalettes().observe(viewLifecycleOwner, Observer {
             initAdapter(view, it)
         })
+        viewModel.getAllPalettes()
+
 
         initSearch(view)
 
@@ -61,9 +61,10 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
                 if(s==null || s.isEmpty()) (activity as MainActivity).hideKeyboard()
                 viewModel.setSearchTerm(s.toString())}
         })
+        searchEditText.text.clear()
     }
 
-    private fun initAdapter(view: View, palettes: List<Palette>) {
+    private fun initAdapter(view: View, palettes: List<Palette>): SharedPalettesAdapter {
         var palettesView = view.findViewById<RecyclerView>(R.id.browse_palette_list)
 
         palettesView.layoutManager = LinearLayoutManager(requireContext())
@@ -72,5 +73,6 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
 
         palettesView.adapter = adapter
         adapter.notifyDataSetChanged()
+        return adapter
     }
 }
