@@ -14,6 +14,7 @@ import edu.utap.colorexercises.AuthInitActivity
 import edu.utap.colorexercises.MainActivity
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.MainViewModel
+import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment :
     Fragment(R.layout.fragment_home) {
@@ -29,6 +30,7 @@ class HomeFragment :
      */
     private var currentUser: FirebaseUser? = null
     private val viewModel: MainViewModel by activityViewModels()
+    private val TAG = "HomeFragment"
     companion object {
         const val idKey = "idKey"
         fun newInstance(): HomeFragment {
@@ -65,6 +67,7 @@ class HomeFragment :
         val btnMyPalettes = root.findViewById<Button>(R.id.btn_myPalettes)
         val btnBrowsePalettes = root.findViewById<Button>(R.id.btn_browsePalettes)
         val btnSignIn = root.findViewById<Button>(R.id.btn_signIn)
+        val btnSettings = root.findViewById<Button>(R.id.btn_settings)
         btnExercises.setOnClickListener {
             parentFragmentManager
                 .beginTransaction()
@@ -86,6 +89,14 @@ class HomeFragment :
                 .addToBackStack(null)
                 .commit()
         }
+        btnSettings.setOnClickListener {
+            parentFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_frame, SettingsFragment.newInstance())
+                .addToBackStack(null)
+                .commit()
+        }
+
         if (currentUser!=null){
             btnSignIn.text = "Sign Out"
             initSignOut(btnSignIn)
@@ -100,6 +111,8 @@ class HomeFragment :
             initUserUI()
             initAuth()
             initSignOut(btnSignIn)
+            Log.d(TAG, view.toString())
+            view?.findViewById<Button>(R.id.btn_settings)?.visibility=View.VISIBLE
 
         }
     }
@@ -112,11 +125,12 @@ class HomeFragment :
                 initSignIn(btnSignIn)
                 val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
                 toolbar.title = "Please Sign in"
+                view?.findViewById<Button>(R.id.btn_settings)?.visibility=View.INVISIBLE
             }
         }
     }
 
-
+    
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
