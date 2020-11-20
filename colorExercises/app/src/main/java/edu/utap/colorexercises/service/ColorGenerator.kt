@@ -122,5 +122,14 @@ class ColorGenerator {
         }
     }
 
+    fun ComplementaryColor(targetHue: Int,mainSaturation: Double,tolerance: Double): FloatArray {
+        val complementaryHue = (targetHue+180)%360
+        return ColorFromRandomLuminance(complementaryHue,mainSaturation,tolerance)
+    }
+
+    fun TriadColor(targetHue: Int,mainSaturation: Double,tolerance: Double): FloatArray {
+        val complementaryHue = (targetHue+90)%360
+        return ColorFromRandomLuminance(complementaryHue,mainSaturation,tolerance)
+    }
 
 }

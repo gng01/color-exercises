@@ -66,7 +66,7 @@ class ExerciseSet {
         val mainColorMatchTo = Random.nextInt(0,setSize)
         this.colorList = newColorListHSL.map{OneColor(it)}
         val targetHue = this.colorList[mainColorMatchTo].getHSL()[0].toInt()
-        this.mainColor = OneColor(generator.ColorFromRandomLuminance(targetHue,mainSaturation,tolerance))
+        this.mainColor = OneColor(generator.ComplementaryColor(targetHue,mainSaturation,tolerance))
         this.accuracyList = makeAccuracyList(ColorJudge::Complementary)
         //Log.d("XXX ExerciseSet: ", "main color saturation: ${mainColor.hsl[1]}")
     }
@@ -77,7 +77,7 @@ class ExerciseSet {
         val mainColorMatchTo = Random.nextInt(0,setSize)
         this.colorList = newColorListHSL.map{OneColor(it)}
         val targetHue = this.colorList[mainColorMatchTo].getHSL()[0].toInt()
-        this.mainColor = OneColor(generator.ColorFromRandomLuminance(targetHue,mainSaturation,tolerance))
+        this.mainColor = OneColor(generator.TriadColor(targetHue,mainSaturation,tolerance))
         this.accuracyList = makeAccuracyList(ColorJudge::Triad)
         //Log.d("XXX ExerciseSet: ", "main color saturation: ${mainColor.hsl[1]}")
     }

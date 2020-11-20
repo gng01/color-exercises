@@ -17,12 +17,12 @@ class ExerciseModesRepository {
             ExerciseMode("COMPLEMENTARY"
                 ,"Complementary"
                 ,"Complementary: click on one of outer circles whose hue that is complementary to the hue of center circle"
-                ,"https://en.wikipedia.org/wiki/Hue"),
+                ,"https://en.wikipedia.org/wiki/Complementary_colors"),
 
             ExerciseMode("TRIAD"
                 ,"Triad"
                 ,"Triad: click on one of outer circles whose hue that is in triad relation with the hue of center circle"
-                ,"https://en.wikipedia.org/wiki/Hue")
+                ,"http://paletton.com/wiki/index.php?title=Triad")
         )
     }
 
