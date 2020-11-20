@@ -26,4 +26,8 @@ class OneColor(var hsl: FloatArray) {
     fun getLuminance(): Double {
         return luminance
     }
+
+    fun getHex(): String{
+        return "#"+Integer.toHexString(intColor).substring(2)
+    }
 }

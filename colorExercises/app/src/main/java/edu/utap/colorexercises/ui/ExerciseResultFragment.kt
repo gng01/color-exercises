@@ -23,6 +23,7 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
         val mainColorKey = "MainColorKey"
         val resultStateKey = "ResultStateKey"
         val leveledUpKey = "LeveledUpKey"
+        val sentColorKey = "SentColorKey"
         fun newInstance(): ExerciseResultFragment {
             return ExerciseResultFragment()
         }
@@ -41,28 +42,29 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
         selectedColorButton.background.setTint(selectedColorObject.getInt())
         mainColorButton.background.setTint(mainColorObject.getInt())
 
-        //TODO: leave these button clickable, in case we want to access color info/ add to pallet here
-        selectedColorButton.setOnClickListener {
-            Toast.makeText(this.context, "Selected color added to palette", Toast.LENGTH_LONG)
-                .show()
-        }
-
         selectedColorButton.setOnLongClickListener{
-            Toast.makeText(this.context, "Info about selected color", Toast.LENGTH_LONG)
-                .show()
+            sendColorToPalettes(selectedColorObject)
             return@setOnLongClickListener false
-        }
-
-        mainColorButton.setOnClickListener {
-            Toast.makeText(this.context, "Main color added to palette", Toast.LENGTH_LONG)
-                .show()
         }
 
         mainColorButton.setOnLongClickListener{
-            Toast.makeText(this.context, "Info about main color", Toast.LENGTH_LONG)
-                .show()
+            sendColorToPalettes(mainColorObject)
             return@setOnLongClickListener false
         }
+    }
+
+    private fun sendColorToPalettes(colorObject: OneColor){
+        val palettesFragment = MyPalettesFragment()
+        var args = Bundle()
+        args.putString(sentColorKey,colorObject.getHex())
+        palettesFragment.arguments = args
+        parentFragmentManager
+            .beginTransaction()
+            .replace(R.id.main_frame, palettesFragment)
+            .addToBackStack(null)
+            .commit()
+        Toast.makeText(this.context, "Sent color to palettes", Toast.LENGTH_LONG)
+            .show()
     }
 
     private fun initControls(root: View){

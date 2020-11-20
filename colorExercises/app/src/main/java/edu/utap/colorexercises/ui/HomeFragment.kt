@@ -22,11 +22,14 @@ class HomeFragment :
     /*
 
     TODO [Added by Arky 1118]:
-        1. Add user name change page
+        1. DONE - Add user name change page
         2. Add save to my palettes option if i'm not the owner
         3. Create one more game mode
         4. Link colors in ExerciseFragment to Add to MyPalettesFragment
         5. Add ArcLayout Animation in ExerciseFragment
+
+        BUGS:
+        1. BrowsePalettesFragment not staring with full palettes list
 
      */
     private var currentUser: FirebaseUser? = null

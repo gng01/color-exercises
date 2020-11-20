@@ -30,6 +30,11 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //hex color passed from ExerciseResultFragment (String of hex color in form of "#000000"
+        val bundle = arguments
+        if (bundle!=null){
+            val hexColor = bundle.getString(ExerciseResultFragment.sentColorKey)
+        }
         viewModel.observePalettes().observe(viewLifecycleOwner, Observer {
             initAdapter(view, it)
         })
@@ -37,6 +42,7 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
         viewModel.getUserPalettes(FirebaseAuth.getInstance().currentUser?.uid)
 
         initAddPaletteTrigger()
+
     }
 
     override fun onStart() {
