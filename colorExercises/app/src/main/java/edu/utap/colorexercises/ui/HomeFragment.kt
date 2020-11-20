@@ -23,10 +23,11 @@ class HomeFragment :
 
     TODO [Added by Arky 1118]:
         1. DONE - Add user name change page
-        2. Add save to my palettes option if i'm not the owner
+        2. If im not the owner, only allow setting favorites.
         3. Create one more game mode
-        4. Link colors in ExerciseFragment to Add to MyPalettesFragment
+        4. DONE on forward side. -Link colors in ExerciseFragment to Add to MyPalettesFragment
         5. Add ArcLayout Animation in ExerciseFragment
+        6. Add favorites to browsing palettes fragment
 
         BUGS:
         1. BrowsePalettesFragment not staring with full palettes list

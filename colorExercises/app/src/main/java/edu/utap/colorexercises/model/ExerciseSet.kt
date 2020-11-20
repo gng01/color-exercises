@@ -60,11 +60,34 @@ class ExerciseSet {
         //Log.d("XXX ExerciseSet: ", "main color saturation: ${mainColor.hsl[1]}")
     }
 
+    fun NewComplementarySet(setSize: Int, mainSaturation: Double, luminance: Double, saturation: Double){
+        val tolerance = 0.02
+        val newColorListHSL = generator.ColorSetFromRandomHue(setSize,saturation,luminance,tolerance)
+        val mainColorMatchTo = Random.nextInt(0,setSize)
+        this.colorList = newColorListHSL.map{OneColor(it)}
+        val targetHue = this.colorList[mainColorMatchTo].getHSL()[0].toInt()
+        this.mainColor = OneColor(generator.ColorFromRandomLuminance(targetHue,mainSaturation,tolerance))
+        this.accuracyList = makeAccuracyList(ColorJudge::Complementary)
+        //Log.d("XXX ExerciseSet: ", "main color saturation: ${mainColor.hsl[1]}")
+    }
+
+    fun NewTriadSet(setSize: Int, mainSaturation: Double, luminance: Double, saturation: Double){
+        val tolerance = 0.02
+        val newColorListHSL = generator.ColorSetFromRandomHue(setSize,saturation,luminance,tolerance)
+        val mainColorMatchTo = Random.nextInt(0,setSize)
+        this.colorList = newColorListHSL.map{OneColor(it)}
+        val targetHue = this.colorList[mainColorMatchTo].getHSL()[0].toInt()
+        this.mainColor = OneColor(generator.ColorFromRandomLuminance(targetHue,mainSaturation,tolerance))
+        this.accuracyList = makeAccuracyList(ColorJudge::Triad)
+        //Log.d("XXX ExerciseSet: ", "main color saturation: ${mainColor.hsl[1]}")
+    }
+
     fun NewSet() = when(mode){
         //TODO: Ugly hard code for now, think about better ways to represent it, and might be able to import from cloud for extended functionality
         "MATCHVALUE" -> NewLuminanceSet(level%7+6,generator.SaturationForLevel(10,level/7),generator.HueForLevel(level,difficultLevel),generator.SaturationForLevel(10,level/7))
         "MATCHHUE" ->NewHueSet(level%7+6,generator.SaturationForLevelInversed(10,level/7,0.1),generator.LuminanceForLevel(level,difficultLevel),generator.SaturationForLevelInversed(10,level/7,0.1))
-
+        "COMPLEMENTARY" -> NewComplementarySet(level%7+6,generator.SaturationForLevelInversed(10,level/7,0.1),generator.LuminanceForLevel(level,difficultLevel),generator.SaturationForLevelInversed(10,level/7,0.1))
+        "TRIAD" -> NewTriadSet(level%7+6,generator.SaturationForLevelInversed(10,level/7,0.1),generator.LuminanceForLevel(level,difficultLevel),generator.SaturationForLevelInversed(10,level/7,0.1))
         else -> NewLuminanceSet(6,0.0,0,0.0)
 
     }

@@ -21,7 +21,7 @@ import edu.utap.colorexercises.model.MainViewModel
  */
 class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
-    private val debug = true
+    private val debug = false
 
     val modesList = ExerciseModesRepository().fetchModesList()
     //val modeMapName2ID = modesList.map{it.displayName to it.id}.toMap()//mapOf("Match Value" to "MATCHVALUE","Match Hue" to "MATCHHUE")
