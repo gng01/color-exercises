@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -24,6 +26,7 @@ import kotlinx.android.synthetic.main.fragment_mypalettes.*
  */
 class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
     private val viewModel: MainViewModel by viewModels()
+    private val TAG = "XXX BrowsePalettesFragment"
     companion object {
         fun newInstance(): BrowsePalettesFragment {
             return BrowsePalettesFragment()
@@ -31,10 +34,12 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.getAllPalettes()
+        Log.d(TAG, "${viewModel.allPalettes} items")
+
         viewModel.observeLivePalettes().observe(viewLifecycleOwner, Observer {
             initAdapter(view, it)
         })
-        viewModel.getAllPalettes()
 
 
         initSearch(view)
@@ -51,17 +56,34 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
         }
     }
 
-    private fun initSearch(view: View){
+    private fun initSearch(view: View) {
         val searchEditText = view.findViewById<EditText>(R.id.ed_search_palette)
-        searchEditText.addTextChangedListener (object : TextWatcher{
+        val searchBtn = view.findViewById<Button>(R.id.btn_Search)
+        searchBtn.setOnClickListener {
+            val text = searchEditText.text.toString()
+            if (text == null || text.isEmpty()) {
+                viewModel.setSearchTerm("")
+
+            }else{
+                viewModel.setSearchTerm(text)
+            }
+            viewModel.filterList("keywords")
+            (activity as MainActivity).hideKeyboard()
+        }
+
+        searchEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(
-                s: CharSequence?, start: Int, count: Int, after: Int) {}
+                s: CharSequence?, start: Int, count: Int, after: Int
+            ) {
+            }
+
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if(s==null || s.isEmpty()) (activity as MainActivity).hideKeyboard()
-                viewModel.setSearchTerm(s.toString())}
+
+            }
         })
-        searchEditText.text.clear()
+        searchEditText.setText("")
+
     }
 
     private fun initAdapter(view: View, palettes: List<Palette>): SharedPalettesAdapter {

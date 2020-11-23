@@ -30,7 +30,6 @@ class HomeFragment :
         6. Add favorites to browsing palettes fragment
 
         BUGS:
-        1. BrowsePalettesFragment not staring with full palettes list
 
      */
     private var currentUser: FirebaseUser? = null

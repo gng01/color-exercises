@@ -12,6 +12,8 @@ import edu.utap.colorexercises.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import okhttp3.internal.waitMillis
 
 
 class MainViewModel(application: Application,
@@ -29,7 +31,7 @@ class MainViewModel(application: Application,
     private var firebaseAuthLiveData = FirestoreAuthLiveData()
     private lateinit var crashMe: String
     private var userPalettes = MutableLiveData<List<Palette>>()
-    var allPalettes = listOf<Palette>()
+    var allPalettes = MutableLiveData<List<Palette>>()
     var favPalettes = listOf<Palette>()
 
     private var TAG = "MainViewModel"
@@ -209,7 +211,6 @@ class MainViewModel(application: Application,
         // get list of palettes from database
 
         var query = db.collection("palettes")
-
         query
             .orderBy("timeStamp", Query.Direction.DESCENDING)
             .limit(20)
@@ -218,12 +219,17 @@ class MainViewModel(application: Application,
                     Log.w(TAG, "listen:error", ex)
                     return@addSnapshotListener
                 }
-                Log.d(TAG, "fetch ${querySnapshot!!.documents.size}")
-                allPalettes = querySnapshot.documents.mapNotNull {
+                Log.d(TAG, "fetch all ${querySnapshot!!.documents.size}")
+                allPalettes.value= querySnapshot.documents.mapNotNull {
                     it.toObject(Palette::class.java)
                 }
             }
 
+
+    }
+
+    private fun removeAllPalettes(){
+        allPalettes.value = listOf()
     }
 
     private var searchTerm = MutableLiveData<String>("")
@@ -232,11 +238,14 @@ class MainViewModel(application: Application,
         searchTerm.value = s
     }
 
-    private fun filterList(field: String): List<Palette>{
-        if(cloudUid()==null && field=="favoritedUsersList"){return listOf()}
+    fun filterList(field: String) {
+        if(cloudUid()==null && field=="favoritedUsersList"){
+            removeAllPalettes()
+            return
+        }
         if(searchTerm==null || searchTerm.value!!.isEmpty() && field=="keywords"){
             getAllPalettes()
-            return allPalettes
+            return
         }
         val searchString = when(field){
             "favoritedUsersList"-> cloudUid()
@@ -258,23 +267,19 @@ class MainViewModel(application: Application,
                         Log.w(TAG, "listen:error", ex)
                         return@addSnapshotListener
                     }
-                    Log.d(TAG, "fetch ${querySnapshot!!.documents.size}")
-                    favPalettes = querySnapshot.documents.mapNotNull {
+                    Log.d(TAG, "fetch searched ${querySnapshot!!.documents.size}")
+                    allPalettes.value = querySnapshot.documents.mapNotNull {
                         it.toObject(Palette::class.java)
                     }
                 }
 
         }
-        return  favPalettes
+        return
     }
 
-    private var livePalettes = MediatorLiveData<List<Palette>>().apply {
-        addSource(searchTerm){ value = filterList("keywords")}
-        value = allPalettes
-    }
 
-    fun observeLivePalettes(): LiveData<List<Palette>>{
-        return livePalettes
+    fun observeLivePalettes(): LiveData<List<Palette>> {
+        return allPalettes
     }
 
 }
