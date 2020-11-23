@@ -128,9 +128,9 @@ class MainViewModel(application: Application,
         }
     }
 
-    fun AddToFavoritePalettes(id: String) {
-        if (!user.favoritePalettes.contains(id)) {
-            user.favoritePalettes.add(id)
+    fun AddToFavoritePalettes(palette: FavoritedPalette) {
+        if (user.favoritePalettes?.filter{it.id == palette.id}?.count() == 0) {
+            user.favoritePalettes?.add(palette)
             updateUser()
         }
     }

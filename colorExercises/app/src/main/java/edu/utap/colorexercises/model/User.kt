@@ -9,5 +9,5 @@ data class User(
 
     var modes: MutableMap<String, Int> = mutableMapOf(),
 
-    val favoritePalettes : MutableList<String> = mutableListOf()
+    var favoritePalettes : MutableList<FavoritedPalette> = mutableListOf()
 )

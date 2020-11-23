@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import edu.utap.colorexercises.model.FavoritedPalette
 import edu.utap.colorexercises.model.MainViewModel
 import edu.utap.colorexercises.model.Palette
 import kotlinx.android.synthetic.main.activity_edit_palette.*
@@ -106,7 +107,7 @@ class EditPaletteActivity : AppCompatActivity() {
                 val user = FirebaseAuth.getInstance().currentUser
 
                 if (user != null) {
-                    viewModel.AddToFavoritePalettes(palette.id!!)
+                    viewModel.AddToFavoritePalettes(convertPaletteToFavoritedPalette(palette))
 
                     if (!palette.favoritedUsersList.contains(user.uid)) {
                         palette.favoritedUsersList.add(user.uid)
@@ -114,6 +115,15 @@ class EditPaletteActivity : AppCompatActivity() {
                     }
                 }
             }
+    }
+
+    private fun convertPaletteToFavoritedPalette(palette: Palette) : FavoritedPalette {
+        var favoritedPalette = FavoritedPalette()
+        favoritedPalette.id = palette.id
+        favoritedPalette.name = palette.name
+        favoritedPalette.colors = palette.colors
+
+        return favoritedPalette
     }
 
     private fun onSave() {
