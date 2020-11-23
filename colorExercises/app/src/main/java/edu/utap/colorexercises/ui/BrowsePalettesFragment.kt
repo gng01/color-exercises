@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -35,7 +36,6 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getAllPalettes()
-        Log.d(TAG, "${viewModel.allPalettes} items")
 
         viewModel.observeLivePalettes().observe(viewLifecycleOwner, Observer {
             initAdapter(view, it)
@@ -43,6 +43,7 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
 
 
         initSearch(view)
+        initFavBtn(view)
 
 
     }
@@ -71,17 +72,6 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
             (activity as MainActivity).hideKeyboard()
         }
 
-        searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
-            override fun beforeTextChanged(
-                s: CharSequence?, start: Int, count: Int, after: Int
-            ) {
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-
-            }
-        })
         searchEditText.setText("")
 
     }
@@ -96,5 +86,17 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
         palettesView.adapter = adapter
         adapter.notifyDataSetChanged()
         return adapter
+    }
+
+    private fun initFavBtn(view: View){
+        var favBtn = view.findViewById<Button>(R.id.btn_favorites)
+        favBtn.setOnClickListener {
+            if(viewModel.getUid()==null){
+                Toast.makeText(context,"Please sign in", Toast.LENGTH_LONG).show()
+            }else{
+                viewModel.filterList("favoritedUsersList")
+            }
+        }
+
     }
 }
