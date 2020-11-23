@@ -3,6 +3,7 @@ package edu.utap.colorexercises.model
 import android.app.Application
 import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -31,8 +32,8 @@ class MainViewModel(application: Application,
     private var firebaseAuthLiveData = FirestoreAuthLiveData()
     private lateinit var crashMe: String
     private var userPalettes = MutableLiveData<List<Palette>>()
-    var allPalettes = MutableLiveData<List<Palette>>()
-    var favPalettes = listOf<Palette>()
+    private var allPalettes = MutableLiveData<List<Palette>>()
+    private var uid = ""
 
     private var TAG = "MainViewModel"
 
@@ -40,8 +41,12 @@ class MainViewModel(application: Application,
     fun observeFirebaseAuthLiveData(): LiveData<FirebaseUser?> {
         return firebaseAuthLiveData
     }
-    private fun cloudUid(): String? {
-        return firebaseAuthLiveData.value?.uid
+    fun cloudUid(): String? {
+        Log.d(TAG, firebaseAuthLiveData.value.toString())
+        if(firebaseAuthLiveData.value!=null){
+            uid =  firebaseAuthLiveData.value!!.uid
+        }
+        return uid
     }
     private fun cloudUserName(): String? {
         return firebaseAuthLiveData.value?.displayName
@@ -86,6 +91,8 @@ class MainViewModel(application: Application,
                 Log.w(TAG, "Error ", e)
             }
 
+        uid = user.id!!
+
     }
 
 
@@ -94,8 +101,6 @@ class MainViewModel(application: Application,
             Log.d(TAG,"createUser Failed: no user logged in")
             return
         }
-
-
 
         db.collection("users")
             .document(user.id!!)

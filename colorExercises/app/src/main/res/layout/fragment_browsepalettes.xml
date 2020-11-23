@@ -20,9 +20,10 @@
             android:id="@+id/ed_search_palette"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Search Keywords"
+            android:hint="Keyword"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btn_Search"
 
             />
@@ -30,10 +31,19 @@
             android:id="@+id/btn_Search"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@id/btn_favorites"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="Search All Palettes"/>
+        <Button
+            android:id="@+id/btn_favorites"
+            android:layout_width="@dimen/control_button_size"
+            android:layout_height="@dimen/control_button_size"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="Search"/>
+            android:background="@drawable/ic_baseline_favorite_24"/>
+
 
 
 
