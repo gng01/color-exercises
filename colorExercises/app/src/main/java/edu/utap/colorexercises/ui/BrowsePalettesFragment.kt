@@ -91,7 +91,7 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
     private fun initFavBtn(view: View){
         var favBtn = view.findViewById<Button>(R.id.btn_favorites)
         favBtn.setOnClickListener {
-            if(viewModel.cloudUid()==null){
+            if(viewModel.getUid()==null){
                 Toast.makeText(context,"Please sign in", Toast.LENGTH_LONG).show()
             }else{
                 viewModel.filterList("favoritedUsersList")

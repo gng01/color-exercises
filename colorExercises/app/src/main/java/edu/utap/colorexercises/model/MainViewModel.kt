@@ -48,6 +48,10 @@ class MainViewModel(application: Application,
         }
         return uid
     }
+
+    fun getUid() : String?{
+        return user.id
+    }
     private fun cloudUserName(): String? {
         return firebaseAuthLiveData.value?.displayName
     }
@@ -253,10 +257,12 @@ class MainViewModel(application: Application,
             return
         }
         val searchString = when(field){
-            "favoritedUsersList"-> cloudUid()
+            "favoritedUsersList"-> user.id
             "keywords" -> searchTerm.value?.toLowerCase()
             else -> null
         }
+
+        Log.d(TAG, "searchString: $searchString")
 
 
 
