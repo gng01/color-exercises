@@ -33,6 +33,7 @@ class SharedPalettesAdapter(private val context: Context, private val palettes: 
         extras.putString("name", palette?.name)
         extras.putString("username", palette?.ownerUserName)
         extras.putString("ownerUserId", palette?.ownerUserID)
+        extras.putStringArray("favoritedUserIds", palette?.favoritedUsersList?.toTypedArray())
         extras.putStringArray("keywords", palette?.keywords?.toTypedArray())
         extras.putStringArray("palette", palette?.colors?.toTypedArray())
         intent.putExtras(extras)

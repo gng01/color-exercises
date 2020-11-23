@@ -122,6 +122,13 @@ class MainViewModel(application: Application,
         }
     }
 
+    fun AddToFavoritePalettes(id: String) {
+        if (!user.favoritePalettes.contains(id)) {
+            user.favoritePalettes.add(id)
+            updateUser()
+        }
+    }
+
     fun savePalette(palette: Palette, callback: ()->Unit){
         Log.d(
             "HomeViewModel",

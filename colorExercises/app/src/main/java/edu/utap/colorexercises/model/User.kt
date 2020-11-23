@@ -7,5 +7,7 @@ data class User(
     var id: String? = null,
     @ServerTimestamp val timeStamp: Timestamp? = null,
 
-    var modes: MutableMap<String, Int> = mutableMapOf()
+    var modes: MutableMap<String, Int> = mutableMapOf(),
+
+    val favoritePalettes : MutableList<String> = mutableListOf()
 )

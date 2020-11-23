@@ -62,6 +62,7 @@ class EditPaletteActivity : AppCompatActivity() {
 
         palette.id = bundle?.getString("id")
         palette.name = bundle?.getString("name")
+        palette.favoritedUsersList = bundle?.getStringArray("favoritedUserIds")?.toMutableList() ?: mutableListOf<String>()
         palette.keywords = bundle?.getStringArray("keywords")?.toMutableList() ?: mutableListOf<String>()
         palette.ownerUserID = bundle?.getString("ownerUserId")
 
@@ -100,16 +101,18 @@ class EditPaletteActivity : AppCompatActivity() {
                 viewModel.savePalette(palette, { onSave() })
             }
         else
+            // add to favorites
             findViewById<Button>(R.id.copyTrigger)?.setOnClickListener {
-                palette.id = null
-
-                palette.colors = ArrayList<String>(colorData.values)
-
                 val user = FirebaseAuth.getInstance().currentUser
-                palette.ownerUserID = user?.uid
-                palette.ownerUserName = user?.displayName
 
-                viewModel.savePalette(palette, { onSave() })
+                if (user != null) {
+                    viewModel.AddToFavoritePalettes(palette.id!!)
+
+                    if (!palette.favoritedUsersList.contains(user.uid)) {
+                        palette.favoritedUsersList.add(user.uid)
+                        viewModel.savePalette(palette, { onSave() })
+                    }
+                }
             }
     }
 
