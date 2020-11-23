@@ -9,6 +9,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import edu.utap.colorexercises.MainActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class MainViewModel(application: Application,
@@ -27,6 +30,7 @@ class MainViewModel(application: Application,
     private lateinit var crashMe: String
     private var userPalettes = MutableLiveData<List<Palette>>()
     var allPalettes = listOf<Palette>()
+    var favPalettes = listOf<Palette>()
 
     private var TAG = "MainViewModel"
 
@@ -228,21 +232,44 @@ class MainViewModel(application: Application,
         searchTerm.value = s
     }
 
-    private fun filterList(): List<Palette>{
-        Log.d(javaClass.simpleName,
-            "Filter ${searchTerm.value}")
-        getAllPalettes()
-        val searchTermValue = searchTerm.value!!.toLowerCase()
-        if (searchTerm==null || searchTerm.value==null || searchTerm.value!!.isEmpty()){
+    private fun filterList(field: String): List<Palette>{
+        if(cloudUid()==null && field=="favoritedUsersList"){return listOf()}
+        if(searchTerm==null || searchTerm.value!!.isEmpty() && field=="keywords"){
+            getAllPalettes()
             return allPalettes
         }
-        return allPalettes.        filter {
-            it.keywords.contains(searchTermValue)
+        val searchString = when(field){
+            "favoritedUsersList"-> cloudUid()
+            "keywords" -> searchTerm.value?.toLowerCase()
+            else -> null
         }
+
+
+
+        (searchString)?.let {
+            var query = db.collection("palettes")
+
+            query
+                .whereArrayContains(field, it)
+                .orderBy("timeStamp", Query.Direction.DESCENDING)
+                .limit(20)
+                .addSnapshotListener { querySnapshot, ex ->
+                    if (ex != null) {
+                        Log.w(TAG, "listen:error", ex)
+                        return@addSnapshotListener
+                    }
+                    Log.d(TAG, "fetch ${querySnapshot!!.documents.size}")
+                    favPalettes = querySnapshot.documents.mapNotNull {
+                        it.toObject(Palette::class.java)
+                    }
+                }
+
+        }
+        return  favPalettes
     }
 
     private var livePalettes = MediatorLiveData<List<Palette>>().apply {
-        addSource(searchTerm){ value = filterList()}
+        addSource(searchTerm){ value = filterList("keywords")}
         value = allPalettes
     }
 
