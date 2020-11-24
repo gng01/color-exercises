@@ -68,7 +68,7 @@ class MainViewModel(application: Application,
 
 
     fun getUser(){
-        user.id = cloudUid()
+        user.id = getUid()
         if (user.id==null){
             Log.d(TAG,"getUser Failed: no user logged in")
             return
