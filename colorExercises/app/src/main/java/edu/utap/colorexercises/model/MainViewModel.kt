@@ -41,20 +41,24 @@ class MainViewModel(application: Application,
     fun observeFirebaseAuthLiveData(): LiveData<FirebaseUser?> {
         return firebaseAuthLiveData
     }
-    fun cloudUid(): String? {
-        Log.d(TAG, firebaseAuthLiveData.value.toString())
-        if(firebaseAuthLiveData.value!=null){
-            uid =  firebaseAuthLiveData.value!!.uid
-        }
-        return uid
+//    fun cloudUid(): String? {
+//        Log.d(TAG, firebaseAuthLiveData.value.toString())
+//        if(firebaseAuthLiveData.value!=null){
+//            uid =  firebaseAuthLiveData.value!!.uid
+//        }
+//        return uid
+//    }
+
+    fun setLocalUserID(Uid: String?){
+        user.id = Uid;
     }
 
     fun getUid() : String?{
         return user.id
     }
-    private fun cloudUserName(): String? {
-        return firebaseAuthLiveData.value?.displayName
-    }
+//    private fun cloudUserName(): String? {
+//        return firebaseAuthLiveData.value?.displayName
+//    }
 
     fun signOut() {
         FirebaseAuth.getInstance().signOut()
@@ -68,7 +72,8 @@ class MainViewModel(application: Application,
 
 
     fun getUser(){
-        user.id = getUid()
+        //user.id = cloudUid()
+
         if (user.id==null){
             Log.d(TAG,"getUser Failed: no user logged in")
             return
@@ -248,7 +253,7 @@ class MainViewModel(application: Application,
     }
 
     fun filterList(field: String) {
-        if(cloudUid()==null && field=="favoritedUsersList"){
+        if(getUid()==null && field=="favoritedUsersList"){
             removeAllPalettes()
             return
         }

@@ -58,6 +58,7 @@ class HomeFragment :
     private fun initAuth() {
         viewModel.observeFirebaseAuthLiveData().observe(viewLifecycleOwner, Observer {
             currentUser = it
+            viewModel.setLocalUserID(it?.uid)
             val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
             viewModel.getUser()
             toolbar.title = currentUser?.displayName

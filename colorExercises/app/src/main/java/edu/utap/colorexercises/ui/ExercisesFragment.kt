@@ -283,7 +283,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        viewModel.observeFirebaseAuthLiveData()
 
         initProgressBar(view)
         initExerciseSet()
