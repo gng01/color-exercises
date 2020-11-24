@@ -3,6 +3,7 @@ package edu.utap.colorexercises
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View.generateViewId
 import android.widget.Button
 import android.widget.EditText
@@ -135,6 +136,7 @@ class EditPaletteActivity : AppCompatActivity() {
             val view = createColorView(it)
             palette_colors.addView(view)
         }
+        palette_colors.addView(createAddColorView())
     }
 
     private fun createColorView(color: String): TextView {
@@ -160,8 +162,39 @@ class EditPaletteActivity : AppCompatActivity() {
             val result = 1
             startActivityForResult(intent, result)
         }
-
         registerColorData(id, color)
+
+        return view;
+    }
+
+    private fun createAddColorView(): TextView {
+        // copied code from createColorView. maybe refactor
+        val id = generateViewId()
+
+        var view = TextView(this)
+        view.id = id
+        view.textSize = 25f
+        view.setTextColor(Color.WHITE)
+        view.gravity = Gravity.CENTER
+        view.layoutParams = GridLayout.LayoutParams(
+            GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL, 1f),
+            GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL, 1f),
+        )
+
+        view.setBackgroundColor(Color.BLACK)
+        view.text = "+"
+        view.height = 500
+
+        view.setOnClickListener{
+            val intent = Intent(this, EditColorActivity::class.java)
+            val extras = Bundle()
+            extras.putInt(EditColorActivity.originalColorKey, Color.BLACK)
+            extras.putInt(EditColorActivity.viewIdKey, id)
+
+            intent.putExtras(extras)
+            val result = 2
+            startActivityForResult(intent, result)
+        }
 
         return view;
     }
@@ -176,12 +209,26 @@ class EditPaletteActivity : AppCompatActivity() {
 
         data?.extras?.apply{
             val color = getInt(EditColorActivity.colorKey)
-            val id = getInt(EditColorActivity.viewIdKey)
+            val colorHex = String.format("#%06X", 0xFFFFFF and color)
 
-            val view = findViewById<TextView>(id)
-            view.setBackgroundColor(color)
+            var id : Int? = null
 
-            registerColorData(id, String.format("#%06X", 0xFFFFFF and color))
+            if (requestCode == 1) {
+                id = getInt(EditColorActivity.viewIdKey)
+                val view = findViewById<TextView>(id)
+
+                view.setBackgroundColor(color)
+            } else if (requestCode == 2) {
+                id = generateViewId()
+                val view = createColorView(colorHex)
+
+                palette_colors.removeViewAt(palette_colors.childCount - 1)
+                palette_colors.addView(view)
+                palette_colors.addView(createAddColorView())
+            }
+
+            if (id != null)
+                registerColorData(id, colorHex)
         }
     }
 }
