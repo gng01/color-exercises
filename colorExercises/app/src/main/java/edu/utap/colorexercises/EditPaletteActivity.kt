@@ -58,7 +58,13 @@ class EditPaletteActivity : AppCompatActivity() {
     }
 
     private fun initPalette(bundle: Bundle?) : Palette {
-        val colors = bundle?.getStringArray("palette")
+        val colors = bundle?.getStringArray("palette")?.toMutableList()
+
+        val addedColor = bundle?.getString("addedColor")
+
+        if (addedColor != null) {
+            colors?.add(addedColor)
+        }
 
         var palette = Palette()
 
@@ -68,7 +74,7 @@ class EditPaletteActivity : AppCompatActivity() {
         palette.keywords = bundle?.getStringArray("keywords")?.toMutableList() ?: mutableListOf<String>()
         palette.ownerUserID = bundle?.getString("ownerUserId")
 
-        palette.colors = colors?.toMutableList() ?: defaultColors
+        palette.colors = colors ?: defaultColors
 
         return palette
     }

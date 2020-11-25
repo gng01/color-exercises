@@ -15,7 +15,7 @@ import edu.utap.colorexercises.EditPaletteActivity
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.Palette
 
-class UserPalettesAdapter(private val context: Context, private val palettes: List<Palette>)
+class UserPalettesAdapter(private val context: Context, private val palettes: List<Palette>, val hexColor : String?)
     : PalettesAdapter(context, palettes) {
 
     override fun onClick(palette: Palette?) {
@@ -26,6 +26,7 @@ class UserPalettesAdapter(private val context: Context, private val palettes: Li
         extras.putString("ownerUserId", palette?.ownerUserID)
         extras.putStringArray("keywords", palette?.keywords?.toTypedArray())
         extras.putStringArray("palette", palette?.colors?.toTypedArray())
+        extras.putString("addedColor", hexColor)
         intent.putExtras(extras)
         val result = 1
         context.startActivity(intent)

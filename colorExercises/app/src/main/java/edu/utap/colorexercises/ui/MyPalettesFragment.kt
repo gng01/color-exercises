@@ -32,11 +32,12 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
 
         //hex color passed from ExerciseResultFragment (String of hex color in form of "#000000"
         val bundle = arguments
+        var hexColor : String? = null
         if (bundle!=null){
-            val hexColor = bundle.getString(ExerciseResultFragment.sentColorKey)
+            hexColor = bundle.getString(ExerciseResultFragment.sentColorKey)
         }
         viewModel.observePalettes().observe(viewLifecycleOwner, Observer {
-            initAdapter(view, it)
+            initAdapter(view, it, hexColor)
         })
 
         viewModel.getUserPalettes(FirebaseAuth.getInstance().currentUser?.uid)
@@ -65,12 +66,12 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
         }
     }
 
-    private fun initAdapter(view: View, palettes: List<Palette>) {
+    private fun initAdapter(view: View, palettes: List<Palette>, hexColor: String?) {
         var palettesView = view.findViewById<RecyclerView>(R.id.palette_list)
 
         palettesView.layoutManager = LinearLayoutManager(requireContext())
 
-        val adapter = UserPalettesAdapter(requireContext(), palettes)
+        val adapter = UserPalettesAdapter(requireContext(), palettes, hexColor)
 
         palettesView.adapter = adapter
     }
