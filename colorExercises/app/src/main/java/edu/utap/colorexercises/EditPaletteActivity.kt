@@ -62,10 +62,6 @@ class EditPaletteActivity : AppCompatActivity() {
 
         val addedColor = bundle?.getString("addedColor")
 
-        if (addedColor != null) {
-            colors?.add(addedColor)
-        }
-
         var palette = Palette()
 
         palette.id = bundle?.getString("id")
@@ -75,6 +71,10 @@ class EditPaletteActivity : AppCompatActivity() {
         palette.ownerUserID = bundle?.getString("ownerUserId")
 
         palette.colors = colors ?: defaultColors
+
+        if (addedColor != null) {
+            palette.colors.add(addedColor)
+        }
 
         return palette
     }

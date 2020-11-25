@@ -1,5 +1,6 @@
 package edu.utap.colorexercises.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
+import edu.utap.colorexercises.EditPaletteActivity
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.OneColor
 
@@ -17,6 +19,8 @@ import edu.utap.colorexercises.model.OneColor
  */
 class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
 
+    private var userPaletteCount : Int = 0
+
     companion object {
         val titleKey = "TitleKey"
         val selectedColorKey = "SelectedColorKey"
@@ -24,6 +28,7 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
         val resultStateKey = "ResultStateKey"
         val leveledUpKey = "LeveledUpKey"
         val sentColorKey = "SentColorKey"
+        val userPaletteCountKey = "UserPaletteCountKey"
         fun newInstance(): ExerciseResultFragment {
             return ExerciseResultFragment()
         }
@@ -54,17 +59,26 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
     }
 
     private fun sendColorToPalettes(colorObject: OneColor){
-        val palettesFragment = MyPalettesFragment()
-        var args = Bundle()
-        args.putString(sentColorKey,colorObject.getHex())
-        palettesFragment.arguments = args
-        parentFragmentManager
-            .beginTransaction()
-            .replace(R.id.main_frame, palettesFragment)
-            .addToBackStack(null)
-            .commit()
-        Toast.makeText(this.context, "Sent color to palettes", Toast.LENGTH_LONG)
-            .show()
+        if (userPaletteCount > 0) {
+            val palettesFragment = MyPalettesFragment()
+            var args = Bundle()
+            args.putString(sentColorKey, colorObject.getHex())
+            palettesFragment.arguments = args
+            parentFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_frame, palettesFragment)
+                .addToBackStack(null)
+                .commit()
+            Toast.makeText(this.context, "Sent color to palettes", Toast.LENGTH_LONG)
+                .show()
+        } else {
+            val intent = Intent(context, EditPaletteActivity::class.java)
+            val extras = Bundle()
+            extras.putString("addedColor", colorObject.getHex())
+            intent.putExtras(extras)
+
+            this.startActivity(intent)
+        }
     }
 
     private fun initControls(root: View){
@@ -110,6 +124,7 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
         val title = bundle.getString(titleKey)
         val mainColor = bundle.getFloatArray(mainColorKey)
         val selectedColor = bundle.getFloatArray(selectedColorKey)
+        userPaletteCount = bundle.getInt(userPaletteCountKey)
         //added resultState in case we want to customize layout between correct and wrong state
         val resultState = bundle.getBoolean(resultStateKey)
         val leveledUp = bundle.getBoolean(leveledUpKey)

@@ -40,7 +40,7 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
             initAdapter(view, it, hexColor)
         })
 
-        viewModel.getUserPalettes(FirebaseAuth.getInstance().currentUser?.uid)
+        viewModel.getUserPalettes(FirebaseAuth.getInstance().currentUser?.uid, {})
 
         initAddPaletteTrigger()
 
