@@ -4,7 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
-import android.view.View.generateViewId
+import android.view.View.*
 import android.widget.Button
 import android.widget.EditText
 import android.widget.GridLayout
@@ -163,6 +163,7 @@ class EditPaletteActivity : AppCompatActivity() {
             val extras = Bundle()
             extras.putInt(EditColorActivity.originalColorKey, Color.parseColor(colorData[id]))
             extras.putInt(EditColorActivity.viewIdKey, id)
+            extras.putBoolean(EditColorActivity.isNewKey, false)
 
             intent.putExtras(extras)
             val result = 1
@@ -196,6 +197,7 @@ class EditPaletteActivity : AppCompatActivity() {
             val extras = Bundle()
             extras.putInt(EditColorActivity.originalColorKey, Color.BLACK)
             extras.putInt(EditColorActivity.viewIdKey, id)
+            extras.putBoolean(EditColorActivity.isNewKey, true)
 
             intent.putExtras(extras)
             val result = 2
@@ -208,6 +210,10 @@ class EditPaletteActivity : AppCompatActivity() {
     private fun registerColorData(id: Int, color: String) {
         // need data to go along with color views. used for saving
         colorData[id] = color
+    }
+
+    private fun unregisterColorData(id: Int) {
+        colorData.remove(id)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -223,7 +229,13 @@ class EditPaletteActivity : AppCompatActivity() {
                 id = getInt(EditColorActivity.viewIdKey)
                 val view = findViewById<TextView>(id)
 
-                view.setBackgroundColor(color)
+                if (color != 0) {
+                    view.setBackgroundColor(color)
+                    registerColorData(id, colorHex)
+                } else {
+                    unregisterColorData(id)
+                    palette_colors.removeView(view)
+                }
             } else if (requestCode == 2) {
                 id = generateViewId()
                 val view = createColorView(colorHex)
@@ -231,10 +243,9 @@ class EditPaletteActivity : AppCompatActivity() {
                 palette_colors.removeViewAt(palette_colors.childCount - 1)
                 palette_colors.addView(view)
                 palette_colors.addView(createAddColorView())
-            }
 
-            if (id != null)
                 registerColorData(id, colorHex)
+            }
         }
     }
 }

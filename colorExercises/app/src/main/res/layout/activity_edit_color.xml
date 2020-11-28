@@ -38,5 +38,12 @@
             android:text="Change Color"
             android:layout_weight="1" />
 
+        <Button
+            android:id="@+id/removeColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remove Color"
+            android:layout_weight="1" />
+
     </LinearLayout>
 </LinearLayout>
