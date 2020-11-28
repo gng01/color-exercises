@@ -12,13 +12,12 @@ class OneColor(var hsl: FloatArray) {
     // hex is not supported in Android Color except for parsing step as following:
     // private val intColor = Color.parseColor(id)
     private var luminance = 0.toDouble()
-    private val intColor = ColorUtils.HSLToColor(hsl)
+    private var intColor = ColorUtils.HSLToColor(hsl)
 
     init {
         //ColorUtils.colorToHSL(intColor,hsl)
         luminance = ColorUtils.calculateLuminance(intColor)
     }
-
 
     fun getHSL() = this.hsl
     fun getInt() = this.intColor

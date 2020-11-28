@@ -24,16 +24,12 @@ class MainViewModel(application: Application,
     : AndroidViewModel(application) {
     companion object {
         private var user = User()
+        private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        private var firebaseAuthLiveData = FirestoreAuthLiveData()
     }
-    private val appContext = getApplication<Application>().applicationContext
-    private var storageDir =
-        getApplication<Application>().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-    private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private var firebaseAuthLiveData = FirestoreAuthLiveData()
-    private lateinit var crashMe: String
+
     private var userPalettes = MutableLiveData<List<Palette>>()
     private var allPalettes = MutableLiveData<List<Palette>>()
-    private var uid = ""
 
     private var TAG = "MainViewModel"
 
@@ -41,13 +37,6 @@ class MainViewModel(application: Application,
     fun observeFirebaseAuthLiveData(): LiveData<FirebaseUser?> {
         return firebaseAuthLiveData
     }
-//    fun cloudUid(): String? {
-//        Log.d(TAG, firebaseAuthLiveData.value.toString())
-//        if(firebaseAuthLiveData.value!=null){
-//            uid =  firebaseAuthLiveData.value!!.uid
-//        }
-//        return uid
-//    }
 
     fun setLocalUserID(Uid: String?){
         user.id = Uid;
@@ -56,9 +45,6 @@ class MainViewModel(application: Application,
     fun getUid() : String?{
         return user.id
     }
-//    private fun cloudUserName(): String? {
-//        return firebaseAuthLiveData.value?.displayName
-//    }
 
     fun signOut() {
         FirebaseAuth.getInstance().signOut()
@@ -72,8 +58,6 @@ class MainViewModel(application: Application,
 
 
     fun getUser(){
-        //user.id = cloudUid()
-
         if (user.id==null){
             Log.d(TAG,"getUser Failed: no user logged in")
             return
@@ -99,8 +83,6 @@ class MainViewModel(application: Application,
                 Log.d(TAG, "getUser FAILED")
                 Log.w(TAG, "Error ", e)
             }
-
-        uid = user.id!!
 
     }
 
@@ -168,7 +150,6 @@ class MainViewModel(application: Application,
                     "Palette create id: ${palette.id}"
                 )
                 callback()
-
                 getUserPalettes(null)
             }
             .addOnFailureListener { e ->
@@ -188,24 +169,11 @@ class MainViewModel(application: Application,
 
         var query = db.collection("palettes")
 
-        // wondering if we can re-use these blocks of code. they are the same except for one line
-        if (userId.isNullOrEmpty()) {
+        // wondering if we can re-use these blocks of code. they are the same except for one line:
+        // Should not be able to retrieve palette if userID is null
+        if (!userId.isNullOrEmpty()) {
             query
-                .orderBy("timeStamp", Query.Direction.DESCENDING)
-                .limit(20)
-                .addSnapshotListener { querySnapshot, ex ->
-                    if (ex != null) {
-                        Log.w(MainActivity.TAG, "listen:error", ex)
-                        return@addSnapshotListener
-                    }
-                    Log.d(MainActivity.TAG, "fetch ${querySnapshot!!.documents.size}")
-                    userPalettes.value = querySnapshot.documents.mapNotNull {
-                        it.toObject(Palette::class.java)
-                    }
-                }
-        } else {
-            query
-                .whereEqualTo("ownerUserID", userId) // only difference between this block of code and the one in the other condition
+                .whereEqualTo("ownerUserID", userId)
                 .orderBy("timeStamp", Query.Direction.DESCENDING)
                 .limit(20)
                 .addSnapshotListener { querySnapshot, ex ->
@@ -222,12 +190,12 @@ class MainViewModel(application: Application,
     }
 
     fun getAllPalettes(){
-        // get list of palettes from database
+        // get list of all palettes from database
 
         var query = db.collection("palettes")
         query
             .orderBy("timeStamp", Query.Direction.DESCENDING)
-            .limit(20)
+            .limit(100)
             .addSnapshotListener { querySnapshot, ex ->
                 if (ex != null) {
                     Log.w(TAG, "listen:error", ex)
@@ -277,7 +245,7 @@ class MainViewModel(application: Application,
             query
                 .whereArrayContains(field, it)
                 .orderBy("timeStamp", Query.Direction.DESCENDING)
-                .limit(20)
+                .limit(100)
                 .addSnapshotListener { querySnapshot, ex ->
                     if (ex != null) {
                         Log.w(TAG, "listen:error", ex)

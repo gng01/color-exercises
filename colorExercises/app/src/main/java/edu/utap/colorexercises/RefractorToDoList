@@ -1,11 +1,11 @@
 Arky's Code Refractor Todo List:
 V 1. ExerciseModeRepository.kt
 V 2. ExerciseSet
-3. FirestoreAuthLiveData
-4. MainViewModel
-5. OneColor
-6. Palette
-7. User
+V 3. FirestoreAuthLiveData
+V 4. MainViewModel
+V 5. OneColor
+V 6. Palette
+V 7. User
 8. ColorGenerator
 9. ColorJudge
 10. BrowsePalettesFragment

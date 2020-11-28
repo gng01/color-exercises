@@ -36,7 +36,6 @@ class HomeFragment :
     private val viewModel: MainViewModel by activityViewModels()
     private val TAG = "HomeFragment"
     companion object {
-        const val idKey = "idKey"
         fun newInstance(): HomeFragment {
             return HomeFragment()
         }
