@@ -163,6 +163,7 @@ class EditPaletteActivity : AppCompatActivity() {
             val extras = Bundle()
             extras.putInt(EditColorActivity.originalColorKey, Color.parseColor(colorData[id]))
             extras.putInt(EditColorActivity.viewIdKey, id)
+            extras.putBoolean(EditColorActivity.isNewKey, false)
 
             intent.putExtras(extras)
             val result = 1
@@ -196,6 +197,7 @@ class EditPaletteActivity : AppCompatActivity() {
             val extras = Bundle()
             extras.putInt(EditColorActivity.originalColorKey, Color.BLACK)
             extras.putInt(EditColorActivity.viewIdKey, id)
+            extras.putBoolean(EditColorActivity.isNewKey, true)
 
             intent.putExtras(extras)
             val result = 2

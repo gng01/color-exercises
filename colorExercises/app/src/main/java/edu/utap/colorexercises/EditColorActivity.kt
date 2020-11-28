@@ -3,6 +3,8 @@ package edu.utap.colorexercises
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +24,7 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
         val originalColorKey = "originalColor"
         val colorKey = "editcolor"
         val viewIdKey = "viewIdKey"
+        val isNewKey = "isNewKey"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +42,6 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
 
             onFinish(id, picker!!.color)
         }
-
 
         findViewById<View>(R.id.removeColor).setOnClickListener{
             onFinish(id, null)
@@ -61,6 +63,10 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
             picker!!.setNewCenterColor(originalColor)
             picker!!.color = originalColor
         }
+
+        val isNewColor = sourceBundle?.getBoolean(isNewKey)
+
+        findViewById<Button>(R.id.removeColor).visibility = if (isNewColor) GONE else VISIBLE
     }
 
     fun onFinish(id: Int, color: Int?) {
