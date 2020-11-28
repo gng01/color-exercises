@@ -39,6 +39,11 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
 
             onFinish(id, picker!!.color)
         }
+
+
+        findViewById<View>(R.id.removeColor).setOnClickListener{
+            onFinish(id, null)
+        }
     }
 
     override fun onStart() {
@@ -58,7 +63,7 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
         }
     }
 
-    fun onFinish(id: Int, color: Int) {
+    fun onFinish(id: Int, color: Int?) {
         Intent().apply{
             putExtra(colorKey, color)
             putExtra(viewIdKey, id)
