@@ -327,7 +327,6 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         item.rotation = 0f
         item.translationX = dx
         item.translationY = dy
-        Log.d(TAG, "${mainColorButton.y}, ${item.y}")
         return ObjectAnimator.ofPropertyValuesHolder(
             item,
             AnimatorUtils.rotation(0f, 720f),
@@ -344,7 +343,6 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         val mainColorButton = BindMainColor(root)
         if (mainColorButton != null) {
             if (arcLayout != null) {
-                Log.d(TAG, "ArcLayout Animation")
                 root.viewTreeObserver.addOnGlobalLayoutListener(
                     object : OnGlobalLayoutListener {
                         override fun onGlobalLayout() {
