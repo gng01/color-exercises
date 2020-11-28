@@ -151,7 +151,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         exerciseSet.setLevel(this.level)
         exerciseSet.setMode(this.mode.id)
         exerciseSet.setDifficultLevel(this.difficultLevel)
-        exerciseSet.NewSet()
+        exerciseSet.newSet()
         this.accuracyList = exerciseSet.getAccuracyList()
         this.description = mode.description
 
