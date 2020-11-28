@@ -1,10 +1,15 @@
 package edu.utap.colorexercises.ui
 
+import android.animation.Animator
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.view.animation.OvershootInterpolator
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,6 +19,9 @@ import edu.utap.colorexercises.model.ExerciseMode
 import edu.utap.colorexercises.model.ExerciseModesRepository
 import edu.utap.colorexercises.model.ExerciseSet
 import edu.utap.colorexercises.model.MainViewModel
+import java.util.*
+import java.util.concurrent.ThreadLocalRandom
+
 
 /**
  * Exercise Fragment that handles view bindings
@@ -44,8 +52,9 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private var modesAdapter: ArrayAdapter<String>? =null
     private lateinit var levelsSpinner: Spinner
     private lateinit var modesSpinner: Spinner
-    private var levelsMap = mutableMapOf<ExerciseMode,MutableList<Int>>(mode to levelsArray)
+    private var levelsMap = mutableMapOf<ExerciseMode, MutableList<Int>>(mode to levelsArray)
     private val viewModel: MainViewModel by viewModels()
+
 
     private val TAG = "XXX ExercisesFragment"
 
@@ -86,8 +95,8 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         //Log.d("XXX ExercisesFragment: ", "progress ${givenProgress}")
         if(givenProgress>=100){
             //Log.d("XXX ExercisesFragment: ", "incrementing level to ${level+1}")
-            exerciseSet.setLevel(level+1)
-            updateLevels(level+1)
+            exerciseSet.setLevel(level + 1)
+            updateLevels(level + 1)
             progress=0
             progressBar.progress = progress
             //trick to get around spinner.setSelection not working issue
@@ -109,14 +118,13 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
                 }
             }
         }
-        viewModel.setMode(this.mode.id,level)
+        viewModel.setMode(this.mode.id, level)
         levelsArray = levelsMap[this.mode]!!
-        //Log.d("XXX ExercisesFragment: updateLevels", "levelsArray: ${levelsArray.toList()}, ${levelsArray.last()}")
         levelsAdapter!!.notifyDataSetChanged()
         //had to add the following line because notifyDataSetChanged() is not always working
         // this takes more resources but is only required under rare occasion, thus tolerable
         if (levelsSpinner.count!=levelsArray.size){
-            levelsAdapter = ArrayAdapter(this.requireContext(), R.layout.spinner_row,levelsArray)
+            levelsAdapter = ArrayAdapter(this.requireContext(), R.layout.spinner_row, levelsArray)
             levelsAdapter!!.notifyDataSetChanged()
             levelsSpinner.adapter = levelsAdapter
         }
@@ -159,7 +167,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     private fun initLevelsSpinner(root: View){
         levelsSpinner = root.findViewById<Spinner>(R.id.spinner_levels)
-        levelsAdapter = ArrayAdapter(this.requireContext(), R.layout.spinner_row,levelsArray)
+        levelsAdapter = ArrayAdapter(this.requireContext(), R.layout.spinner_row, levelsArray)
         levelsAdapter!!.notifyDataSetChanged()
         levelsSpinner.adapter = levelsAdapter
         levelsSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
@@ -178,7 +186,11 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     private fun initModesSpinner(root: View){
         modesSpinner = root.findViewById<Spinner>(R.id.spinner_modes)
-        modesAdapter = ArrayAdapter(this.requireContext(), R.layout.spinner_modes_row,displaynamesArray)
+        modesAdapter = ArrayAdapter(
+            this.requireContext(),
+            R.layout.spinner_modes_row,
+            displaynamesArray
+        )
         modesAdapter!!.notifyDataSetChanged()
         modesSpinner.adapter = modesAdapter
         modesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
@@ -205,12 +217,13 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         }
     }
 
-    private fun BindMainColor(root: View){
+    private fun BindMainColor(root: View): Button? {
         val mainColorButton = root.findViewById<Button>(R.id.btn_exercise_main_color)
         mainColorButton.background.setTint(exerciseSet.getMainColor().getInt())
         mainColorButton.setOnClickListener {
             Toast.makeText(this.context, "Clicked on center", Toast.LENGTH_LONG).show()
         }
+        return mainColorButton
     }
     private fun BindButton(view: View, position: Int){
         if(position>=exerciseSet.getSize()){
@@ -226,17 +239,27 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             val mainColor = exerciseSet.getMainColor()
             val selectedColor = exerciseSet.getColorList()[position]
             val accuracy = accuracyList[position]
-            args.putFloatArray(ExerciseResultFragment.mainColorKey,mainColor.hsl)
-            args.putFloatArray(ExerciseResultFragment.selectedColorKey,selectedColor.hsl)
+            args.putFloatArray(ExerciseResultFragment.mainColorKey, mainColor.hsl)
+            args.putFloatArray(ExerciseResultFragment.selectedColorKey, selectedColor.hsl)
             if (accuracy>=this.accuracyThreshold) {
                 progress+=accuracy.toInt()/this.roundsToLevelUp.toInt()
                 var leveledUp = setProgress(progress)
                 args.putBoolean(ExerciseResultFragment.leveledUpKey, leveledUp)
-                args.putString(ExerciseResultFragment.titleKey, String.format("Match! Accuracy: %.1f",accuracy))
+                args.putString(
+                    ExerciseResultFragment.titleKey, String.format(
+                        "Match! Accuracy: %.1f",
+                        accuracy
+                    )
+                )
                 args.putBoolean(ExerciseResultFragment.resultStateKey, true)
             }else{
                 args.putBoolean(ExerciseResultFragment.leveledUpKey, false)
-                args.putString(ExerciseResultFragment.titleKey, String.format("Incorrect! Accuracy: %.1f",accuracy))
+                args.putString(
+                    ExerciseResultFragment.titleKey, String.format(
+                        "Incorrect! Accuracy: %.1f",
+                        accuracy
+                    )
+                )
                 args.putBoolean(ExerciseResultFragment.resultStateKey, false)
             }
             resultFragment.arguments = args
@@ -254,8 +277,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             //Log.d("XXX ExercisesFragment: ", "refreshing, level $level")
             initProgressBar(this)
              initExerciseSet()
-             initChildButtons(this)
-             BindMainColor(this)
+             initArcLayout(this)
             SetTitle(this)
             setHelp(this)
 
@@ -263,12 +285,76 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     }
 
-    private fun initChildButtons(root: View){
+    private fun initChildButtons(root: View): ArcLayout? {
         val arcLayout = root.findViewById<ArcLayout>(R.id.arc_layout)
         for (i in 0 until arcLayout.childCount) {
             //Log.d("XXX ExercisesFragment: ", "${i}'th layout")
-            BindButton(arcLayout.getChildAt(i),i)
+            BindButton(arcLayout.getChildAt(i), i)
 
+        }
+        return arcLayout
+    }
+
+
+
+    // animation codes
+    private fun showMenu(arcLayout: ArcLayout, mainColorButton: Button) {
+        arcLayout.setVisibility(View.VISIBLE)
+        val animSet = AnimatorSet()
+        val animList: MutableList<Animator> = ArrayList()
+        var i = 0
+        val len: Int = arcLayout.getChildCount()
+        while (i < len) {
+            createShowItemAnimator(arcLayout.getChildAt(i), mainColorButton)?.let { animList.add(it) }
+            i++
+        }
+
+        val randomAngle = ThreadLocalRandom.current().nextInt(0, 180).toFloat()
+        val wholeAnimation = ObjectAnimator.ofPropertyValuesHolder(arcLayout, AnimatorUtils.rotation(0f, randomAngle))
+        animList.add(wholeAnimation)
+
+        animSet.duration = 400
+        animSet.interpolator = OvershootInterpolator()
+        animSet.playTogether(animList)
+        animSet.start()
+    }
+
+    private fun createShowItemAnimator(item: View, mainColorButton: Button): Animator? {
+        val dx: Float = mainColorButton.x - item.x
+        val dy: Float = mainColorButton.y - item.y
+        item.scaleX = 0.5f
+        item.scaleY = 0.5f
+        item.rotation = 0f
+        item.translationX = dx
+        item.translationY = dy
+        Log.d(TAG, "${mainColorButton.y}, ${item.y}")
+        return ObjectAnimator.ofPropertyValuesHolder(
+            item,
+            AnimatorUtils.rotation(0f, 720f),
+            AnimatorUtils.translationX(dx, 0f),
+            AnimatorUtils.translationY(dy, 0f),
+            AnimatorUtils.scaleX(1f),
+            AnimatorUtils.scaleY(1f)
+
+        )
+    }
+
+    private fun initArcLayout(root: View){
+        val arcLayout = initChildButtons(root)
+        val mainColorButton = BindMainColor(root)
+        if (mainColorButton != null) {
+            if (arcLayout != null) {
+                Log.d(TAG, "ArcLayout Animation")
+                root.viewTreeObserver.addOnGlobalLayoutListener(
+                    object : OnGlobalLayoutListener {
+                        override fun onGlobalLayout() {
+                            // Layout has happened here.
+                            showMenu(arcLayout, mainColorButton)
+                            // Don't forget to remove your listener when you are done with it.
+                            root.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        }
+                    })
+            }
         }
     }
 
@@ -291,8 +377,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         initLevelsSpinner(view)
         initModesSpinner(view)
         updateLevels(levelsArray[levelsArray.lastIndex])
-        initChildButtons(view)
-        BindMainColor(view)
+        initArcLayout(view)
         SetTitle(view)
         setHelp(view)
     }
