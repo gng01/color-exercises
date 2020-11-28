@@ -35,8 +35,8 @@ class ColorGenerator {
                 lowerBound = lightness
             }
 
-            val randomCuttingPosition = ThreadLocalRandom.current().nextInt(1, 5)
-            lightness = lowerBound + (upperBound-lowerBound)/ randomCuttingPosition
+            val randomScaling = ThreadLocalRandom.current().nextInt(1, 5)
+            lightness = (upperBound+lowerBound)/randomScaling
         }
         return hsl
     }
