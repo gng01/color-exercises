@@ -55,6 +55,7 @@ class SharedPalettesAdapter(private val context: Context, private val palettes: 
         usernameView.text = palette?.ownerUserName
         tagsView.text = palette?.keywords?.joinToString()
 
+        colorsView.removeAllViews()
         palette?.colors?.forEach {
             colorsView.addView(createColorView(0, it))
         }

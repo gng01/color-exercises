@@ -55,6 +55,10 @@ class EditPaletteActivity : AppCompatActivity() {
     
     private fun initLayout() {
         findViewById<TextView>(R.id.heading)?.text = (if (isNewPalette) "Create" else "Edit") + " Palette"
+
+        val user = FirebaseAuth.getInstance().currentUser
+
+        findViewById<Button>(R.id.copyTrigger)?.text = if (!palette.favoritedUsersList.contains(user?.uid)) "Add to Favorites" else "Remove from Favorites"
     }
 
     private fun initPalette(bundle: Bundle?) : Palette {
@@ -118,8 +122,11 @@ class EditPaletteActivity : AppCompatActivity() {
 
                     if (!palette.favoritedUsersList.contains(user.uid)) {
                         palette.favoritedUsersList.add(user.uid)
-                        viewModel.savePalette(palette, { onSave() })
+                    } else {
+                        palette.favoritedUsersList.remove(user.uid)
                     }
+
+                    viewModel.savePalette(palette, { onSave() })
                 }
             }
     }
@@ -243,8 +250,6 @@ class EditPaletteActivity : AppCompatActivity() {
                 palette_colors.removeViewAt(palette_colors.childCount - 1)
                 palette_colors.addView(view)
                 palette_colors.addView(createAddColorView())
-
-                registerColorData(id, colorHex)
             }
         }
     }

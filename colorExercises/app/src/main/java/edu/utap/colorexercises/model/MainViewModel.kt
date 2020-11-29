@@ -32,7 +32,7 @@ class MainViewModel(application: Application,
     private var allPalettes = MutableLiveData<List<Palette>>()
 
     private var TAG = "MainViewModel"
-
+    public  var isShowingFavorites = false
 
     fun observeFirebaseAuthLiveData(): LiveData<FirebaseUser?> {
         return firebaseAuthLiveData
