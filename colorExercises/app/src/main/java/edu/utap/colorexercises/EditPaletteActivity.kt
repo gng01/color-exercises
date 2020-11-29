@@ -243,8 +243,6 @@ class EditPaletteActivity : AppCompatActivity() {
                 palette_colors.removeViewAt(palette_colors.childCount - 1)
                 palette_colors.addView(view)
                 palette_colors.addView(createAddColorView())
-
-                registerColorData(id, colorHex)
             }
         }
     }
