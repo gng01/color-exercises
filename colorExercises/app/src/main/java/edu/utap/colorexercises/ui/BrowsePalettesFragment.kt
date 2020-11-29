@@ -45,7 +45,14 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
         initSearch(view)
         initFavBtn(view)
 
+        viewModel.isShowingFavorites = false
+    }
 
+    override fun onStart() {
+        super.onStart()
+
+        if (viewModel.isShowingFavorites)
+            viewModel.filterList("favoritedUsersList")
     }
 
 
@@ -95,6 +102,7 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
                 Toast.makeText(context,"Please sign in", Toast.LENGTH_LONG).show()
             }else{
                 viewModel.filterList("favoritedUsersList")
+                viewModel.isShowingFavorites = true
             }
         }
 
