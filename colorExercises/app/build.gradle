@@ -62,5 +62,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:19.4.0'
     implementation 'com.google.firebase:firebase-firestore:21.7.1'
 
+    //GIF manager
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.17'
+
 }
 apply plugin: 'com.google.gms.google-services'

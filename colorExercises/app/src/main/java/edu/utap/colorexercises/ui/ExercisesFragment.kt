@@ -29,7 +29,7 @@ import java.util.concurrent.ThreadLocalRandom
  */
 class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
-    private val debug = false
+    private val debug = true
 
     val modesList = ExerciseModesRepository().fetchModesList()
     //val modeMapName2ID = modesList.map{it.displayName to it.id}.toMap()//mapOf("Match Value" to "MATCHVALUE","Match Hue" to "MATCHHUE")

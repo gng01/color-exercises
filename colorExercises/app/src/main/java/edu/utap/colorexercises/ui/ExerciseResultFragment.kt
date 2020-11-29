@@ -1,16 +1,22 @@
 package edu.utap.colorexercises.ui
 
+import android.animation.Animator
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.view.animation.OvershootInterpolator
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.fragment.app.FragmentManager
+import androidx.core.animation.doOnEnd
+import com.ogaclejapan.arclayout.ArcLayout
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.OneColor
+import pl.droidsonroids.gif.GifImageView
+import java.util.ArrayList
+import java.util.concurrent.ThreadLocalRandom
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -35,8 +41,8 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
     }
 
     private fun initResultPair(root: View, mainColor: FloatArray, selectedColor: FloatArray){
-        val selectedColorButton = root.findViewById<Button>(R.id.btn_result_selection)
-        val mainColorButton = root.findViewById<Button>(R.id.btn_result_main)
+        val selectedColorButton = root.findViewById<ImageView>(R.id.btn_result_selection)
+        val mainColorButton = root.findViewById<ImageView>(R.id.btn_result_main)
         val selectedColorObject = OneColor(selectedColor)
         val mainColorObject = OneColor(mainColor)
         selectedColorButton.background.setTint(selectedColorObject.getInt())
@@ -63,17 +69,10 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
             .replace(R.id.main_frame, palettesFragment)
             .addToBackStack(null)
             .commit()
-        Toast.makeText(this.context, "Sent color to palettes", Toast.LENGTH_LONG)
-            .show()
     }
 
-    private fun initControls(root: View){
-//        val backButton = root.findViewById<Button>(R.id.btn_result_back)
+    private fun initNextButton(root: View){
         val nextButton = root.findViewById<Button>(R.id.btn_result_next)
-
-//        backButton.setOnClickListener {
-//            parentFragmentManager.popBackStack()
-//        }
         nextButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
@@ -81,27 +80,62 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
     }
 
     private fun levelUpAnimation(){
-        val levelUpView = view?.findViewById<Button>(R.id.level_up_view)
-        //Log.d("XXX ExerciseResultFragment: ", "levelupview: ${levelUpView}")
-        levelUpView?.apply {
-            this.visibility = View.VISIBLE
-            this.alpha=0.0f
-            this.animate()
-                .alpha(0.7f)
-                .scaleXBy(2.0f)
-                .scaleYBy(2.0f)
-                .setListener(null)
-                .setDuration(2000)
-                .withEndAction {
-                    this.animate()
-                        .alpha(0.0f)
-                        .setDuration(1000)
-                        .withEndAction {
-                            this.visibility = View.GONE
-                        }
-                }
-                .start()
+        val levelUpText = view?.findViewById<TextView>(R.id.level_up_view)
+        val levelUpGIF = view?.findViewById<GifImageView>(R.id.level_up_gif)
+
+        val animSet = AnimatorSet()
+        val animList: MutableList<Animator> = ArrayList()
+
+        textAnimator(levelUpText!!)?.let{animList.add(it)}
+        gifAnimator(levelUpGIF!!)?.let{animList.add(it)}
+
+        animSet.duration = 5000
+        animSet.interpolator = OvershootInterpolator()
+        animSet.playTogether(animList)
+        animSet.start()
+        animSet.doOnEnd {
+            disappearAnimation(levelUpText)
+            disappearAnimation(levelUpGIF)
         }
+
+
+    }
+
+
+
+
+    private fun disappearAnimation(item: View) {
+        item.animate()
+            .alpha(0f)
+            .setDuration(1000)
+            .withEndAction {
+                item.visibility = View.GONE
+            }
+        return
+    }
+
+    private fun textAnimator(item: TextView): Animator? {
+        item.visibility = View.VISIBLE
+        return ObjectAnimator.ofPropertyValuesHolder(
+            item,
+            AnimatorUtils.translationX(-100f, 0f),
+            AnimatorUtils.translationY(-100f, 600f),
+            AnimatorUtils.scaleX(1.2f),
+            AnimatorUtils.scaleY(1.2f)
+
+        )
+    }
+
+    private fun gifAnimator(item: GifImageView): Animator? {
+        item.visibility = View.VISIBLE
+        return ObjectAnimator.ofPropertyValuesHolder(
+            item,
+            AnimatorUtils.translationY(0f, -100f),
+            AnimatorUtils.rotation(360f),
+            AnimatorUtils.scaleX(1f),
+            AnimatorUtils.scaleY(1f)
+
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -110,13 +144,11 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
         val title = bundle.getString(titleKey)
         val mainColor = bundle.getFloatArray(mainColorKey)
         val selectedColor = bundle.getFloatArray(selectedColorKey)
-        //added resultState in case we want to customize layout between correct and wrong state
-        val resultState = bundle.getBoolean(resultStateKey)
         val leveledUp = bundle.getBoolean(leveledUpKey)
 
         if (title!=null) {initTitle(view, title)}
         if (mainColor!=null && selectedColor!=null) {initResultPair(view,mainColor,selectedColor)}
-        initControls(view)
+        initNextButton(view)
         if (leveledUp) levelUpAnimation()
 
     }
