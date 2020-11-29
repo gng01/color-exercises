@@ -8,7 +8,6 @@ class ExerciseSet {
     private lateinit var mainColor: OneColor
     private lateinit var colorList: List<OneColor>
     private lateinit var accuracyList: List<Double>
-    private val generator = ColorGenerator()
     private var level = 0
     private var mode = "MATCHVALUE"
     private var difficultLevel = 30
@@ -26,48 +25,48 @@ class ExerciseSet {
 
 
     fun newLuminanceSet(hue: Int, saturation: Double){
-        val newColorListHSL = generator.colorSetFromUniformLuminance(setSize,hue,saturation,tolerance)
+        val newColorListHSL = ColorGenerator.colorSetFromUniformLuminance(setSize,hue,saturation,tolerance)
         val mainColorMatchTo = Random.nextInt(0,setSize)
         this.colorList = newColorListHSL.map{OneColor(it)        }
         val targetLuminance = this.colorList[mainColorMatchTo].getLuminance()
-        this.mainColor = OneColor(generator.colorFromRandomHue(saturation,targetLuminance,tolerance))
-        this.accuracyList = makeAccuracyList(ColorJudge::LuminanceDifference)
+        this.mainColor = OneColor(ColorGenerator.colorFromRandomHue(saturation,targetLuminance,tolerance))
+        this.accuracyList = makeAccuracyList(ColorJudge::luminanceDifference)
     }
 
     fun newHueSet(luminance: Double, saturation: Double){
-        val newColorListHSL = generator.colorSetFromRandomHue(setSize,saturation,luminance,tolerance)
+        val newColorListHSL = ColorGenerator.colorSetFromRandomHue(setSize,saturation,luminance,tolerance)
         val mainColorMatchTo = Random.nextInt(0,setSize)
         this.colorList = newColorListHSL.map{OneColor(it)}
         val targetHue = this.colorList[mainColorMatchTo].getHSL()[0].toInt()
-        this.mainColor = OneColor(generator.colorFromRandomLuminance(targetHue,saturation,tolerance))
-        this.accuracyList = makeAccuracyList(ColorJudge::HueDistance)
+        this.mainColor = OneColor(ColorGenerator.colorFromRandomLuminance(targetHue,saturation,tolerance))
+        this.accuracyList = makeAccuracyList(ColorJudge::hueDistance)
     }
 
     fun newComplementarySet(luminance: Double, saturation: Double){
-        val newColorListHSL = generator.colorSetFromRandomHue(setSize,saturation,luminance,tolerance)
+        val newColorListHSL = ColorGenerator.colorSetFromRandomHue(setSize,saturation,luminance,tolerance)
         val mainColorMatchTo = Random.nextInt(0,setSize)
         this.colorList = newColorListHSL.map{OneColor(it)}
         val targetHue = this.colorList[mainColorMatchTo].getHSL()[0].toInt()
-        this.mainColor = OneColor(generator.complementaryColor(targetHue,saturation,tolerance))
-        this.accuracyList = makeAccuracyList(ColorJudge::Complementary)
+        this.mainColor = OneColor(ColorGenerator.complementaryColor(targetHue,saturation,tolerance))
+        this.accuracyList = makeAccuracyList(ColorJudge::complementary)
     }
 
     fun newTriadSet(luminance: Double, saturation: Double){
-        val newColorListHSL = generator.colorSetFromRandomHue(setSize,saturation,luminance,tolerance)
+        val newColorListHSL = ColorGenerator.colorSetFromRandomHue(setSize,saturation,luminance,tolerance)
         val mainColorMatchTo = Random.nextInt(0,setSize)
         this.colorList = newColorListHSL.map{OneColor(it)}
         val targetHue = this.colorList[mainColorMatchTo].getHSL()[0].toInt()
-        this.mainColor = OneColor(generator.triadColor(targetHue,saturation,tolerance))
-        this.accuracyList = makeAccuracyList(ColorJudge::Triad)
+        this.mainColor = OneColor(ColorGenerator.triadColor(targetHue,saturation,tolerance))
+        this.accuracyList = makeAccuracyList(ColorJudge::triad)
     }
 
 
     fun newSet() {
         setSetSize(level % 7 + 6)
-        val incrementingSaturation = generator.saturationForLevelLow2High(10, level / 7)
-        val decrementingSaturation = generator.saturationForLevelHigh2Low(10, level / 7, 0.1)
-        val hueGenerator = generator.hueForLevel(level, difficultLevel)
-        val luminanceGenerator = generator.luminanceForLevel(level, difficultLevel)
+        val incrementingSaturation = ColorGenerator.saturationForLevelLow2High(10, level / 7)
+        val decrementingSaturation = ColorGenerator.saturationForLevelHigh2Low(10, level / 7, 0.1)
+        val hueGenerator = ColorGenerator.hueForLevel(level, difficultLevel)
+        val luminanceGenerator = ColorGenerator.luminanceForLevel(level, difficultLevel)
 
         return when(mode){
             "MATCHVALUE" -> newLuminanceSet(hueGenerator,incrementingSaturation)

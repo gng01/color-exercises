@@ -6,9 +6,9 @@ V 4. MainViewModel
 V 5. OneColor
 V 6. Palette
 V 7. User
-8. ColorGenerator
-9. ColorJudge
-10. BrowsePalettesFragment
+V 8. ColorGenerator
+V 9. ColorJudge
+V 10. BrowsePalettesFragment
 11. ExerciseResultFragment
 12. ExercisesFragment
 13. HomeFragment

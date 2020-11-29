@@ -6,7 +6,7 @@ import kotlin.math.min
 
 class ColorJudge {
     companion object{
-        fun Contrast(firstColor: OneColor, secondColor: OneColor): Double {
+        fun contrast(firstColor: OneColor, secondColor: OneColor): Double {
 
             val firstLuminance = firstColor.getLuminance()
             val secondLuminance = secondColor.getLuminance()
@@ -21,24 +21,24 @@ class ColorJudge {
             return contrast
         }
 
-        fun LuminanceDifference(firstColor: OneColor, secondColor: OneColor): Double {
+        fun luminanceDifference(firstColor: OneColor, secondColor: OneColor): Double {
 
             return abs(firstColor.getLuminance()-secondColor.getLuminance())
         }
 
-        fun HueDistance(firstColor: OneColor, secondColor: OneColor): Double{
+        fun hueDistance(firstColor: OneColor, secondColor: OneColor): Double{
             //calculate distance on hue wheel, return number between 0-1
             val degreeDifference = abs(firstColor.getHSL()[0]-secondColor.getHSL()[0])
             val degreeDistance = min(degreeDifference, 360-degreeDifference)
             return (degreeDistance/360).toDouble()
         }
 
-        fun Complementary(firstColor: OneColor, secondColor: OneColor): Double{
-            return abs(0.5-HueDistance(firstColor, secondColor))
+        fun complementary(firstColor: OneColor, secondColor: OneColor): Double{
+            return abs(0.5-hueDistance(firstColor, secondColor))
         }
 
-        fun Triad(firstColor: OneColor, secondColor: OneColor): Double{
-            return min(abs(0.33-HueDistance(firstColor, secondColor)), abs(0.67-HueDistance(firstColor, secondColor)))
+        fun triad(firstColor: OneColor, secondColor: OneColor): Double{
+            return min(abs(0.33-hueDistance(firstColor, secondColor)), abs(0.67-hueDistance(firstColor, secondColor)))
         }
 
         fun accuracy(firstColor: OneColor, secondColor: OneColor, criteria: (OneColor, OneColor)-> Double): Double {
