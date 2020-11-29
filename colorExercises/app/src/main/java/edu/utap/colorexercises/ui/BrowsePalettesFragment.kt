@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -28,11 +29,13 @@ import kotlinx.android.synthetic.main.fragment_mypalettes.*
 class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
     private val viewModel: MainViewModel by viewModels()
     private val TAG = "XXX BrowsePalettesFragment"
+
     companion object {
         fun newInstance(): BrowsePalettesFragment {
             return BrowsePalettesFragment()
         }
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getAllPalettes()
@@ -59,7 +62,7 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        data?.extras?.apply{
+        data?.extras?.apply {
 
         }
     }
@@ -72,7 +75,7 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
             if (text == null || text.isEmpty()) {
                 viewModel.setSearchTerm("")
 
-            }else{
+            } else {
                 viewModel.setSearchTerm(text)
             }
             viewModel.filterList("keywords")
@@ -95,23 +98,27 @@ class BrowsePalettesFragment : Fragment(R.layout.fragment_browsepalettes) {
         return adapter
     }
 
-    private fun initFavBtn(view: View){
+    private fun initFavBtn(view: View) {
         var favIcon = view.findViewById<ImageView>(R.id.btn_favorites)
         favIcon.setImageResource(R.drawable.ic_baseline_favorite_24)
         favIcon.setOnClickListener {
-            if(viewModel.getUid()==null){
-                Toast.makeText(context,"Please sign in", Toast.LENGTH_LONG).show()
-            }else{
+            if (viewModel.getUid() == null) {
+                Toast.makeText(context, "Please sign in", Toast.LENGTH_LONG).show()
+            } else {
                 viewModel.filterList("favoritedUsersList")
                 viewModel.isShowingFavorites = true
                 initBackBtn(favIcon)
             }
         }
 
-    private fun initBackBtn(backIcon: ImageView){
+
+    }
+
+    private fun initBackBtn(backIcon: ImageView) {
         backIcon.setImageResource(R.drawable.ic_baseline_arrow_back_24)
         backIcon.setOnClickListener {
             viewModel.getAllPalettes()
+            viewModel.isShowingFavorites = false
             initFavBtn(backIcon)
         }
     }
