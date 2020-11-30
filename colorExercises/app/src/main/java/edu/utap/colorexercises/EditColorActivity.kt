@@ -6,6 +6,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.larswerkman.holocolorpicker.*
@@ -66,7 +67,22 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
 
         val isNewColor = sourceBundle?.getBoolean(isNewKey)
 
-        findViewById<Button>(R.id.removeColor).visibility = if (isNewColor) GONE else VISIBLE
+        updateTriggerUi(isNewColor)
+    }
+
+    fun updateTriggerUi(isNewColor : Boolean) {
+        val saveTrigger = findViewById<Button>(R.id.button1)
+        val removeTrigger = findViewById<Button>(R.id.removeColor)
+
+        if (isNewColor) {
+            removeTrigger.visibility = GONE
+            saveTrigger.layoutParams.apply {
+                (this as LinearLayout.LayoutParams).weight = 2f
+            }
+        } else {
+            removeTrigger.visibility = VISIBLE
+        }
+
     }
 
     fun onFinish(id: Int, color: Int?) {
