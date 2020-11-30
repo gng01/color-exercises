@@ -19,19 +19,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment :
     Fragment(R.layout.fragment_home) {
-    /*
 
-    TODO [Added by Arky 1118]:
-        1. DONE - Add user name change page
-        2. Done: If im not the owner, only allow setting favorites.
-        3. Done - Create one more game mode
-        4. DONE on forward side. -Link colors in ExerciseFragment to Add to MyPalettesFragment
-        5. Add ArcLayout Animation in ExerciseFragment
-        6. Done: Add favorites to browsing palettes fragment
-
-        BUGS:
-
-     */
     private var currentUser: FirebaseUser? = null
     private val viewModel: MainViewModel by activityViewModels()
     private val TAG = "HomeFragment"
