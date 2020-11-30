@@ -65,14 +65,14 @@ class ExerciseSet {
         setSetSize(level % 7 + 6)
         val incrementingSaturation = ColorGenerator.saturationForLevelLow2High(10, level / 7)
         val decrementingSaturation = ColorGenerator.saturationForLevelHigh2Low(10, level / 7, 0.1)
-        val hueGenerator = ColorGenerator.hueForLevel(level, difficultLevel)
-        val luminanceGenerator = ColorGenerator.luminanceForLevel(level, difficultLevel)
+        val hue = ColorGenerator.hueForLevel(level, difficultLevel)
+        val luminance = ColorGenerator.luminanceForLevel(level, difficultLevel)
 
         return when(mode){
-            "MATCHVALUE" -> newLuminanceSet(hueGenerator,incrementingSaturation)
-            "MATCHHUE" ->newHueSet(luminanceGenerator,decrementingSaturation)
-            "COMPLEMENTARY" -> newComplementarySet(luminanceGenerator,decrementingSaturation)
-            "TRIAD" -> newTriadSet(luminanceGenerator,decrementingSaturation)
+            "MATCHVALUE" -> newLuminanceSet(hue,incrementingSaturation)
+            "MATCHHUE" ->newHueSet(luminance,decrementingSaturation)
+            "COMPLEMENTARY" -> newComplementarySet(luminance,decrementingSaturation)
+            "TRIAD" -> newTriadSet(luminance,decrementingSaturation)
             else -> newLuminanceSet(0,0.0)
         }
     }

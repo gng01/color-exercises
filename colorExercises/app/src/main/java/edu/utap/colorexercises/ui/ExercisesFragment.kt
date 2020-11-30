@@ -6,7 +6,6 @@ import android.animation.ObjectAnimator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.animation.OvershootInterpolator
@@ -15,12 +14,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.ogaclejapan.arclayout.ArcLayout
 import edu.utap.colorexercises.R
-import edu.utap.colorexercises.model.ExerciseMode
-import edu.utap.colorexercises.model.ExerciseModesRepository
-import edu.utap.colorexercises.model.ExerciseSet
-import edu.utap.colorexercises.model.MainViewModel
+import edu.utap.colorexercises.model.*
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
+import kotlin.random.Random.Default.nextInt
 
 
 /**
@@ -29,9 +26,10 @@ import java.util.concurrent.ThreadLocalRandom
  */
 class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
-    private val debug = true
+    private val debug = false
 
     val modesList = ExerciseModesRepository().fetchModesList()
+    val buttonsRepository = ButtonsRepository()
     //val modeMapName2ID = modesList.map{it.displayName to it.id}.toMap()//mapOf("Match Value" to "MATCHVALUE","Match Hue" to "MATCHHUE")
     private var displaynamesArray = modesList.map{it.displayName}//modeMap.keys.toMutableList()
 
@@ -43,6 +41,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private var mode = modesList[0]//"MATCHVALUE"
     private var description = "DummyTitle"
     private var difficultLevel = 30
+    private var middleLevel = 15
     //private var progress = 0
     private lateinit var progressBar: ProgressBar
     private var roundsToLevelUp = 4
@@ -59,7 +58,6 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private val TAG = "XXX ExercisesFragment"
 
     companion object {
-        val refreshKey = "RefreshKey"
         val exercisesFragmentKey = "ExercisesFragment"
 
 
@@ -107,8 +105,6 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     }
 
     private fun updateLevels(level: Int){
-        //Log.d("XXX ExercisesFragment: ", "levels before ${levelsMap.entries}, curlevel $level")
-        //Log.d("XXX ExercisesFragment: ", "levels ${levelsMap.entries}")
         if(!levelsMap.containsKey(this.mode)){
             levelsMap[this.mode] = mutableListOf(0)
         }else {
@@ -124,18 +120,25 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         //had to add the following line because notifyDataSetChanged() is not always working
         // this takes more resources but is only required under rare occasion, thus tolerable
         if (levelsSpinner.count!=levelsArray.size){
-            levelsAdapter = ArrayAdapter(this.requireContext(), R.layout.spinner_row, levelsArray)
-            levelsAdapter!!.notifyDataSetChanged()
-            levelsSpinner.adapter = levelsAdapter
+            updateLevelsSpinner()
         }
-        levelsSpinner.post(Runnable {
-            kotlin.run { levelsSpinner.setSelection(levelsArray.last()) }
-        })
+        postToLevelsSpinner()
 
         this.level = level
 
     }
 
+    private fun postToLevelsSpinner(){
+        levelsSpinner.post(Runnable {
+            kotlin.run { levelsSpinner.setSelection(levelsArray.last()) }
+        })
+    }
+
+    private fun updateLevelsSpinner(){
+        levelsAdapter = ArrayAdapter(this.requireContext(), R.layout.spinner_row, levelsArray)
+        levelsAdapter!!.notifyDataSetChanged()
+        levelsSpinner.adapter = levelsAdapter
+    }
 
 
     private fun initProgressBar(root: View){
@@ -144,15 +147,12 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     }
 
     private fun initLevelsMap(){
-        for (value in modesList){//modeMap.values){
+        for (value in modesList){
             levelsMap[value] = viewModel.getModeLevels(value.id)
         }
         if (this.levelsMap[this.mode]!=null){
             this.levelsArray = this.levelsMap[this.mode]!!
         }
-
-        //Log.d(TAG,"Levelsmap ${levelsMap}")
-
     }
 
     private fun initExerciseSet(){
@@ -174,7 +174,6 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 if (levelsArray[p2]==level) return
                 level = levelsArray[p2]
-                //Log.d("XXX ExercisesFragment: levelsSpinner", "levelsArray: ${levelsArray.toList()}")
                 refresh()
             }
 
@@ -195,21 +194,12 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         modesSpinner.adapter = modesAdapter
         modesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                if (modesList.find { it.displayName== displaynamesArray[p2]}?.id==mode.id) return //modeMapName2ID[displaynamesArray[p2]]==mode) return
+                if (modesList.find { it.displayName== displaynamesArray[p2]}?.id==mode.id) return
                 mode = modesList.find { it.displayName== displaynamesArray[p2]}?: error("mode doesn't exist")
-                if (levelsMap[mode]==null){
-                    updateLevels(0)
-                }else{
-                    levelsArray = levelsMap[mode]!!
-                    levelsAdapter?.notifyDataSetChanged()
-                    updateLevels(levelsArray.last())
-                }
+                modesToLevels(mode)
 
                 progress=0
-                levelsSpinner.post(Runnable {
-                    kotlin.run { levelsSpinner.setSelection(levelsArray.last()) }
-                })
-                Log.d("XXX ExercisesFragment: ModeSpinner", "levelsArray: ${levelsArray.toList()}")
+                postToLevelsSpinner()
                 refresh()
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -217,20 +207,32 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         }
     }
 
-    private fun BindMainColor(root: View): Button? {
+    private fun modesToLevels(mode: ExerciseMode){
+        if (levelsMap[mode]==null){
+            updateLevels(0)
+        }else {
+            levelsArray = levelsMap[mode]!!
+            levelsAdapter?.notifyDataSetChanged()
+            updateLevels(levelsArray.last())
+        }
+    }
+
+
+
+    private fun bindMainColor(root: View): Button? {
         val mainColorButton = root.findViewById<Button>(R.id.btn_exercise_main_color)
         mainColorButton.background.setTint(exerciseSet.getMainColor().getInt())
-        mainColorButton.setOnClickListener {
-            Toast.makeText(this.context, "Clicked on center", Toast.LENGTH_LONG).show()
-        }
         return mainColorButton
     }
-    private fun BindButton(view: View, position: Int){
+
+    private fun bindButton(view: View, position: Int){
         if(position>=exerciseSet.getSize()){
             view.visibility = View.GONE
             return
         }
         view.visibility = View.VISIBLE
+        if(level>=difficultLevel){
+            view.setBackgroundResource(buttonsRepository.randomButton())}
 
         view.background.setTint(exerciseSet.getColorList()[position].getInt())
         view.setOnClickListener {
@@ -274,7 +276,6 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     fun refresh(){
         val root = view
         root?.apply {
-            //Log.d("XXX ExercisesFragment: ", "refreshing, level $level")
             initProgressBar(this)
              initExerciseSet()
              initArcLayout(this)
@@ -287,9 +288,12 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     private fun initChildButtons(root: View): ArcLayout? {
         val arcLayout = root.findViewById<ArcLayout>(R.id.arc_layout)
+        val buttonId = buttonsRepository.randomButton()
         for (i in 0 until arcLayout.childCount) {
-            //Log.d("XXX ExercisesFragment: ", "${i}'th layout")
-            BindButton(arcLayout.getChildAt(i), i)
+            if (level>middleLevel){
+                arcLayout.getChildAt(i).setBackgroundResource(buttonId)
+            }
+            bindButton(arcLayout.getChildAt(i), i)
 
         }
         return arcLayout
@@ -297,8 +301,8 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
 
 
-    // animation codes
-    private fun showMenu(arcLayout: ArcLayout, mainColorButton: Button) {
+    // animation codes adapted from Arclayout demo codes.
+    private fun showColors(arcLayout: ArcLayout, mainColorButton: Button) {
         arcLayout.setVisibility(View.VISIBLE)
         val animSet = AnimatorSet()
         val animList: MutableList<Animator> = ArrayList()
@@ -329,7 +333,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         item.translationY = dy
         return ObjectAnimator.ofPropertyValuesHolder(
             item,
-            AnimatorUtils.rotation(0f, 720f),
+            AnimatorUtils.rotation(0f, ThreadLocalRandom.current().nextInt(0, 360).toFloat()),
             AnimatorUtils.translationX(dx, 0f),
             AnimatorUtils.translationY(dy, 0f),
             AnimatorUtils.scaleX(1f),
@@ -340,14 +344,14 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     private fun initArcLayout(root: View){
         val arcLayout = initChildButtons(root)
-        val mainColorButton = BindMainColor(root)
+        val mainColorButton = bindMainColor(root)
         if (mainColorButton != null) {
             if (arcLayout != null) {
                 root.viewTreeObserver.addOnGlobalLayoutListener(
                     object : OnGlobalLayoutListener {
                         override fun onGlobalLayout() {
                             // Layout has happened here.
-                            showMenu(arcLayout, mainColorButton)
+                            showColors(arcLayout, mainColorButton)
                             // Don't forget to remove your listener when you are done with it.
                             root.viewTreeObserver.removeOnGlobalLayoutListener(this)
                         }

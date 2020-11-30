@@ -64,7 +64,7 @@ class ColorGenerator {
             for (i in 0 until setSize){
                 newColorList.add(colorFromRandomHue(saturation, luminance, tolerance))
             }
-            if(luminance.toInt()==-1 || saturation.toInt()==-1){newColorList.shuffle()}
+            if(luminance<0 || saturation<0){newColorList.shuffle()}
             return newColorList.toList()
         }
 
@@ -103,19 +103,12 @@ class ColorGenerator {
 
         fun hueForLevel(level: Int, randomizeStartFromLevel: Int): Int {
             // used for getting saturation setting for specific level in ExerciseSet
-            return if (level>= randomizeStartFromLevel){
-                -1
-            } else{
-                ThreadLocalRandom.current().nextInt(this.hueRange[0], this.hueRange[1])
-            }
+            return ThreadLocalRandom.current().nextInt(this.hueRange[0], this.hueRange[1])
         }
 
         fun luminanceForLevel(level: Int, difficultLevel: Int): Double {
-            return if (level>= difficultLevel){
-                -1.toDouble()
-            } else{
-                ThreadLocalRandom.current().nextDouble(this.luminanceRange[0], this.luminanceRange[1])
-            }
+            return ThreadLocalRandom.current().nextDouble(this.luminanceRange[0], this.luminanceRange[1])
+
         }
 
         fun complementaryColor(targetHue: Int, mainSaturation: Double, tolerance: Double): FloatArray {
