@@ -149,7 +149,9 @@ class EditPaletteActivity : AppCompatActivity() {
             val view = createColorView(it)
             palette_colors.addView(view)
         }
-        palette_colors.addView(createAddColorView())
+
+        if (isPaletteOwner())
+            palette_colors.addView(createAddColorView())
     }
 
     private fun createColorView(color: String): TextView {
@@ -165,17 +167,19 @@ class EditPaletteActivity : AppCompatActivity() {
         view.setBackgroundColor(Color.parseColor(color))
         view.height = 500
 
-        view.setOnClickListener{
-            val intent = Intent(this, EditColorActivity::class.java)
-            val extras = Bundle()
-            extras.putInt(EditColorActivity.originalColorKey, Color.parseColor(colorData[id]))
-            extras.putInt(EditColorActivity.viewIdKey, id)
-            extras.putBoolean(EditColorActivity.isNewKey, false)
+        if (isPaletteOwner())
+            view.setOnClickListener{
+                val intent = Intent(this, EditColorActivity::class.java)
+                val extras = Bundle()
+                extras.putInt(EditColorActivity.originalColorKey, Color.parseColor(colorData[id]))
+                extras.putInt(EditColorActivity.viewIdKey, id)
+                extras.putBoolean(EditColorActivity.isNewKey, false)
 
-            intent.putExtras(extras)
-            val result = 1
-            startActivityForResult(intent, result)
-        }
+                intent.putExtras(extras)
+                val result = 1
+                startActivityForResult(intent, result)
+            }
+
         registerColorData(id, color)
 
         return view;
@@ -249,7 +253,9 @@ class EditPaletteActivity : AppCompatActivity() {
 
                 palette_colors.removeViewAt(palette_colors.childCount - 1)
                 palette_colors.addView(view)
-                palette_colors.addView(createAddColorView())
+
+                if (isPaletteOwner())
+                    palette_colors.addView(createAddColorView())
             }
         }
     }
