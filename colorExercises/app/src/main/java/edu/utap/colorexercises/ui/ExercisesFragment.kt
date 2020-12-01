@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.animation.OvershootInterpolator
@@ -26,7 +27,7 @@ import kotlin.random.Random.Default.nextInt
  */
 class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
-    private val debug = false
+    private val debug = true
 
     val modesList = ExerciseModesRepository().fetchModesList()
     val buttonsRepository = ButtonsRepository()
@@ -282,6 +283,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             SetTitle(this)
             setHelp(this)
 
+
         }
 
     }
@@ -292,6 +294,8 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         for (i in 0 until arcLayout.childCount) {
             if (level>middleLevel){
                 arcLayout.getChildAt(i).setBackgroundResource(buttonId)
+            }else{
+                arcLayout.getChildAt(i).setBackgroundResource(R.drawable.ic_exercise_button_round_50)
             }
             bindButton(arcLayout.getChildAt(i), i)
 
