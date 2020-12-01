@@ -29,20 +29,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="2" >
-
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Change Color"
-            android:layout_weight="1" />
+        android:weightSum="2"
+        android:layout_marginTop="24dp">
 
         <Button
             android:id="@+id/removeColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Remove Color"
+            android:text="Remove"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save to Palette"
             android:layout_weight="1" />
 
     </LinearLayout>
