@@ -166,7 +166,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     }
 
-    private fun initLevelsSpinner(root: View){
+    private fun initLevelsSpinner(root: View, userPaletteCount: Int){
         levelsSpinner = root.findViewById<Spinner>(R.id.spinner_levels)
         levelsAdapter = ArrayAdapter(this.requireContext(), R.layout.spinner_row, levelsArray)
         levelsAdapter!!.notifyDataSetChanged()
@@ -175,7 +175,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 if (levelsArray[p2]==level) return
                 level = levelsArray[p2]
-                refresh()
+                refresh(userPaletteCount)
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -184,7 +184,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     }
 
 
-    private fun initModesSpinner(root: View){
+    private fun initModesSpinner(root: View, userPaletteCount: Int){
         modesSpinner = root.findViewById<Spinner>(R.id.spinner_modes)
         modesAdapter = ArrayAdapter(
             this.requireContext(),
@@ -201,7 +201,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
                 progress=0
                 postToLevelsSpinner()
-                refresh()
+                refresh(userPaletteCount)
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
             }
@@ -226,7 +226,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         return mainColorButton
     }
 
-    private fun bindButton(view: View, position: Int){
+    private fun bindButton(view: View, position: Int, paletteCount: Int){
         if(position>=exerciseSet.getSize()){
             view.visibility = View.GONE
             return
@@ -244,6 +244,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             val accuracy = accuracyList[position]
             args.putFloatArray(ExerciseResultFragment.mainColorKey, mainColor.hsl)
             args.putFloatArray(ExerciseResultFragment.selectedColorKey, selectedColor.hsl)
+            args.putInt(ExerciseResultFragment.userPaletteCountKey, paletteCount)
             if (accuracy>=this.accuracyThreshold) {
                 progress+=accuracy.toInt()/this.roundsToLevelUp.toInt()
                 var leveledUp = setProgress(progress)
@@ -274,12 +275,12 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         }
     }
 
-    fun refresh(){
+    fun refresh(userPaletteCount: Int){
         val root = view
         root?.apply {
             initProgressBar(this)
              initExerciseSet()
-             initArcLayout(this)
+             initArcLayout(this, userPaletteCount)
             SetTitle(this)
             setHelp(this)
 
@@ -288,7 +289,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
     }
 
-    private fun initChildButtons(root: View): ArcLayout? {
+    private fun initChildButtons(root: View, userPaletteCount: Int): ArcLayout? {
         val arcLayout = root.findViewById<ArcLayout>(R.id.arc_layout)
         val buttonId = buttonsRepository.randomButton()
         for (i in 0 until arcLayout.childCount) {
@@ -297,7 +298,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
             }else{
                 arcLayout.getChildAt(i).setBackgroundResource(R.drawable.ic_exercise_button_round_50)
             }
-            bindButton(arcLayout.getChildAt(i), i)
+            bindButton(arcLayout.getChildAt(i), i, userPaletteCount)
 
         }
         return arcLayout
@@ -346,8 +347,8 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         )
     }
 
-    private fun initArcLayout(root: View){
-        val arcLayout = initChildButtons(root)
+    private fun initArcLayout(root: View, userPaletteCount: Int){
+        val arcLayout = initChildButtons(root, userPaletteCount)
         val mainColorButton = bindMainColor(root)
         if (mainColorButton != null) {
             if (arcLayout != null) {
@@ -377,14 +378,18 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
         viewModel.observeFirebaseAuthLiveData()
 
-        initProgressBar(view)
-        initExerciseSet()
+        viewModel.getUserPalettes(viewModel.getUid(), {
+            initProgressBar(view)
+            initExerciseSet()
 
-        initLevelsSpinner(view)
-        initModesSpinner(view)
-        updateLevels(levelsArray[levelsArray.lastIndex])
-        initArcLayout(view)
-        SetTitle(view)
-        setHelp(view)
+            val userPaletteCount = it?.count() ?: 0
+
+            initLevelsSpinner(view, userPaletteCount)
+            initModesSpinner(view, userPaletteCount)
+            updateLevels(levelsArray[levelsArray.lastIndex])
+            initArcLayout(view, userPaletteCount)
+            SetTitle(view)
+            setHelp(view)
+        })
     }
 }

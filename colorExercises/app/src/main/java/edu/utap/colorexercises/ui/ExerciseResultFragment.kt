@@ -3,6 +3,7 @@ package edu.utap.colorexercises.ui
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
@@ -12,6 +13,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.animation.doOnEnd
 import com.ogaclejapan.arclayout.ArcLayout
+import edu.utap.colorexercises.EditPaletteActivity
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.OneColor
 import pl.droidsonroids.gif.GifImageView
@@ -30,10 +32,13 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
         val resultStateKey = "ResultStateKey"
         val leveledUpKey = "LeveledUpKey"
         val sentColorKey = "SentColorKey"
+        val userPaletteCountKey = "UserPaletteCountKey"
         fun newInstance(): ExerciseResultFragment {
             return ExerciseResultFragment()
         }
     }
+
+    private var userPaletteCount : Int = 0
 
     private fun initTitle(root: View, title: String){
         val titleTV = root.findViewById<TextView>(R.id.txt_exercise_result)
@@ -60,15 +65,24 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
     }
 
     private fun sendColorToPalettes(colorObject: OneColor){
-        val palettesFragment = MyPalettesFragment()
-        var args = Bundle()
-        args.putString(sentColorKey,colorObject.getHex())
-        palettesFragment.arguments = args
-        parentFragmentManager
-            .beginTransaction()
-            .replace(R.id.main_frame, palettesFragment)
-            .addToBackStack(null)
-            .commit()
+        if (userPaletteCount > 0) {
+            val palettesFragment = MyPalettesFragment()
+            var args = Bundle()
+            args.putString(sentColorKey, colorObject.getHex())
+            palettesFragment.arguments = args
+            parentFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_frame, palettesFragment)
+                .addToBackStack(null)
+                .commit()
+        } else {
+            val intent = Intent(context, EditPaletteActivity::class.java)
+            val extras = Bundle()
+            extras.putString("addedColor", colorObject.getHex())
+            intent.putExtras(extras)
+
+            this.startActivity(intent)
+        }
     }
 
     private fun initNextButton(root: View){
@@ -144,6 +158,7 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
         val title = bundle.getString(titleKey)
         val mainColor = bundle.getFloatArray(mainColorKey)
         val selectedColor = bundle.getFloatArray(selectedColorKey)
+        userPaletteCount = bundle.getInt(userPaletteCountKey)
         val leveledUp = bundle.getBoolean(leveledUpKey)
 
         if (title!=null) {initTitle(view, title)}
