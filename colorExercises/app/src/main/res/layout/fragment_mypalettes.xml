@@ -25,9 +25,10 @@
         />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/addPaletteTrigger"
+        android:layout_margin="12dp"
         android:text="New Palette">
     </Button>
 
