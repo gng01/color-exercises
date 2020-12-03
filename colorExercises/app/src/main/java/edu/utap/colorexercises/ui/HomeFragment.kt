@@ -45,9 +45,9 @@ class HomeFragment :
     private fun initAccessUI() {
         viewModel.observeFirebaseAuthLiveData().observe(requireActivity(), Observer {
             if( it == null ) {
-                btn_myPalettes.visibility = View.GONE
+                btn_myPalettes?.visibility = View.GONE
             } else {
-                btn_myPalettes.visibility = View.VISIBLE
+                btn_myPalettes?.visibility = View.VISIBLE
             }
         })
     }
