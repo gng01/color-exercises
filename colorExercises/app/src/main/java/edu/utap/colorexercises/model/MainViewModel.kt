@@ -155,6 +155,7 @@ class MainViewModel(application: Application,
             .addOnFailureListener { e ->
                 Log.d(TAG, "savePalette FAILED")
                 Log.w(TAG, "Error ", e)
+
             }
     }
 
@@ -164,6 +165,7 @@ class MainViewModel(application: Application,
         if(FirebaseAuth.getInstance().currentUser == null) {
             Log.d(javaClass.simpleName, "Can't get Palettes, no one is logged in")
             userPalettes.value = listOf()
+            callback(userPalettes.value)
             return
         }
 

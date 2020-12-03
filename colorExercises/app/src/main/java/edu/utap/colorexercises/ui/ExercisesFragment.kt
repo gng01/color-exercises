@@ -378,11 +378,15 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
         viewModel.observeFirebaseAuthLiveData()
 
-        viewModel.getUserPalettes(viewModel.getUid(), {
+        val userId = viewModel.getUid()
+
+        viewModel.getUserPalettes(userId, {
             initProgressBar(view)
             initExerciseSet()
 
-            val userPaletteCount = it?.count() ?: 0
+            var userPaletteCount = -1
+            if (userId != null)
+                userPaletteCount = it?.count() ?: 0
 
             initLevelsSpinner(view, userPaletteCount)
             initModesSpinner(view, userPaletteCount)

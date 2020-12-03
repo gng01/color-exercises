@@ -53,14 +53,16 @@ class ExerciseResultFragment : Fragment(R.layout.fragment_exercise_result) {
         selectedColorButton.background.setTint(selectedColorObject.getInt())
         mainColorButton.background.setTint(mainColorObject.getInt())
 
-        selectedColorButton.setOnLongClickListener{
-            sendColorToPalettes(selectedColorObject)
-            return@setOnLongClickListener false
-        }
+        if (userPaletteCount != -1) {
+            selectedColorButton.setOnLongClickListener {
+                sendColorToPalettes(selectedColorObject)
+                return@setOnLongClickListener false
+            }
 
-        mainColorButton.setOnLongClickListener{
-            sendColorToPalettes(mainColorObject)
-            return@setOnLongClickListener false
+            mainColorButton.setOnLongClickListener {
+                sendColorToPalettes(mainColorObject)
+                return@setOnLongClickListener false
+            }
         }
     }
 
