@@ -42,6 +42,16 @@ class HomeFragment :
 
     }
 
+    private fun initAccessUI() {
+        viewModel.observeFirebaseAuthLiveData().observe(requireActivity(), Observer {
+            if( it == null ) {
+                btn_myPalettes.visibility = View.GONE
+            } else {
+                btn_myPalettes.visibility = View.VISIBLE
+            }
+        })
+    }
+
     private fun initAuth() {
         viewModel.observeFirebaseAuthLiveData().observe(viewLifecycleOwner, Observer {
             currentUser = it
@@ -132,6 +142,7 @@ class HomeFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initButtons(view)
+        initAccessUI()
     }
 
 }
