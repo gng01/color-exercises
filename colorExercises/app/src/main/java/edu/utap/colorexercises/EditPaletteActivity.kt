@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
 import android.view.View.*
 import android.widget.Button
 import android.widget.EditText
@@ -54,11 +55,19 @@ class EditPaletteActivity : AppCompatActivity() {
     }
     
     private fun initLayout() {
-        findViewById<TextView>(R.id.heading)?.text = (if (isNewPalette) "Create" else "Edit") + " Palette"
+        findViewById<TextView>(R.id.heading)?.text =
+            (if (isNewPalette) "Create" else "Edit") + " Palette"
 
         val user = FirebaseAuth.getInstance().currentUser
 
-        findViewById<Button>(R.id.copyTrigger)?.text = if (!palette.favoritedUsersList.contains(user?.uid)) "Add to Favorites" else "Remove from Favorites"
+        val trigger = findViewById<Button>(R.id.copyTrigger)
+
+        if (user != null) {
+            trigger?.text = if (!palette.favoritedUsersList.contains(user?.uid)) "Add to Favorites" else "Remove from Favorites"
+            trigger?.visibility = View.VISIBLE
+        } else {
+            trigger?.visibility = View.GONE
+        }
     }
 
     private fun initPalette(bundle: Bundle?) : Palette {
