@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,27 +9,29 @@
     tools:context=".ui.MyPalettesFragment">
 
     <TextView
+        android:id="@+id/palettesHeading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="clip_horizontal|center"
+        android:padding="25dp"
         android:text="My Palettes"
         android:textAllCaps="true"
-        android:padding="25dp"
-        android:id="@+id/palettesHeading"
-        android:textSize="30dp"></TextView>
+        android:textSize="30dp"
+        app:layout_constraintTop_toTopOf="parent"></TextView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/palette_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/addPaletteTrigger"
+        app:layout_constraintTop_toBottomOf="@id/palettesHeading" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/addPaletteTrigger"
-        android:layout_margin="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:text="New Palette">
     </Button>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
