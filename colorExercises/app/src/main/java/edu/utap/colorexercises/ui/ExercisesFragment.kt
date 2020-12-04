@@ -24,6 +24,7 @@ import kotlin.random.Random.Default.nextInt
 /**
  * Exercise Fragment that handles view bindings
  * Not using separate adapter because it is not supported by ArcLayout
+ * Set debug to true for fast progress through games
  */
 class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
