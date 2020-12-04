@@ -15,6 +15,7 @@ import edu.utap.colorexercises.AuthInitActivity
 import edu.utap.colorexercises.MainActivity
 import edu.utap.colorexercises.R
 import edu.utap.colorexercises.model.MainViewModel
+import edu.utap.colorexercises.model.Palette
 import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment :
@@ -23,6 +24,7 @@ class HomeFragment :
     private var currentUser: FirebaseUser? = null
     private val viewModel: MainViewModel by activityViewModels()
     private val TAG = "HomeFragment"
+    private var userpaletteCount = 0
     companion object {
         fun newInstance(): HomeFragment {
             return HomeFragment()
@@ -65,7 +67,9 @@ class HomeFragment :
 
     private fun initObserveSignIn() {
         viewModel.observeFirebaseAuthLiveData().observe(viewLifecycleOwner, Observer {
-            viewModel.initUserPalettes(it?.uid)
+            viewModel.getUserPalettes(it?.uid, {
+                userpaletteCount = it?.count() ?: 0
+            })
         })
     }
 
@@ -77,9 +81,14 @@ class HomeFragment :
         val btnSignIn = root.findViewById<Button>(R.id.btn_signIn)
         val btnSettings = root.findViewById<Button>(R.id.btn_settings)
         btnExercises.setOnClickListener {
+            val fragment = ExercisesFragment.newInstance()
+            var args = Bundle()
+            args.putInt(ExercisesFragment.userPaletteCountKey, userpaletteCount)
+            fragment.arguments = args
+
             parentFragmentManager
                 .beginTransaction()
-                .replace(R.id.main_frame, ExercisesFragment.newInstance())
+                .replace(R.id.main_frame, fragment)
                 .addToBackStack(null)
                 .commit()
         }

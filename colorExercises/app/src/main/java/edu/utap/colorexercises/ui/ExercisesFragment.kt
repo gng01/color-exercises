@@ -55,12 +55,13 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
     private var levelsMap = mutableMapOf<ExerciseMode, MutableList<Int>>(mode to levelsArray)
     private val viewModel: MainViewModel by viewModels()
 
+    private var userPaletteCount = 0
 
     private val TAG = "XXX ExercisesFragment"
 
     companion object {
         val exercisesFragmentKey = "ExercisesFragment"
-
+        val userPaletteCountKey = "UserPaletteCount"
 
         var progress = 0
         fun newInstance(): ExercisesFragment {
@@ -383,8 +384,9 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
         initExerciseSet()
 
         var userPaletteCount = -1
-        if (userId != null)
-            userPaletteCount = viewModel.getUserPaletteCount()
+        if (userId != null) {
+            userPaletteCount= arguments?.getInt(ExercisesFragment.userPaletteCountKey) ?: 0
+        }
 
         initLevelsSpinner(view, userPaletteCount)
         initModesSpinner(view, userPaletteCount)
