@@ -29,6 +29,7 @@ class EditColorActivity : AppCompatActivity(), ColorPicker.OnColorChangedListene
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // started out with demo code provided in documentation from color picker tool
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_color)
         picker = findViewById<View>(R.id.picker) as ColorPicker
