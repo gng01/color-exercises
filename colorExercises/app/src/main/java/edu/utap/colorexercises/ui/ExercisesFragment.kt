@@ -378,20 +378,19 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
         val userId = viewModel.getUid()
 
-        viewModel.getUserPalettes(userId, {
-            initProgressBar(view)
-            initExerciseSet()
 
-            var userPaletteCount = -1
-            if (userId != null)
-                userPaletteCount = it?.count() ?: 0
+        initProgressBar(view)
+        initExerciseSet()
 
-            initLevelsSpinner(view, userPaletteCount)
-            initModesSpinner(view, userPaletteCount)
-            updateLevels(levelsArray[levelsArray.lastIndex])
-            initArcLayout(view, userPaletteCount)
-            SetTitle(view)
-            setHelp(view)
-        })
+        var userPaletteCount = -1
+        if (userId != null)
+            userPaletteCount = viewModel.getUserPaletteCount()
+
+        initLevelsSpinner(view, userPaletteCount)
+        initModesSpinner(view, userPaletteCount)
+        updateLevels(levelsArray[levelsArray.lastIndex])
+        initArcLayout(view, userPaletteCount)
+        SetTitle(view)
+        setHelp(view)
     }
 }

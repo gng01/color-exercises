@@ -63,6 +63,12 @@ class HomeFragment :
 
     }
 
+    private fun initObserveSignIn() {
+        viewModel.observeFirebaseAuthLiveData().observe(viewLifecycleOwner, Observer {
+            viewModel.initUserPalettes(it?.uid)
+        })
+    }
+
     private fun initButtons(root: View) {
         //Log.d("XXX HomeFragment", "Recycler view inited")
         val btnExercises = root.findViewById<Button>(R.id.btn_exercises)
@@ -143,6 +149,7 @@ class HomeFragment :
         super.onViewCreated(view, savedInstanceState)
         initButtons(view)
         initAccessUI()
+        initObserveSignIn()
     }
 
 }

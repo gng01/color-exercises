@@ -50,7 +50,14 @@ class MainViewModel(application: Application,
         FirebaseAuth.getInstance().signOut()
     }
 
+    fun initUserPalettes(userId: String?) {
+        // this will set the cached value here
+        getUserPalettes(userId, {})
+    }
 
+    fun getUserPaletteCount(): Int {
+        return userPalettes.value?.count() ?: 0
+    }
 
     fun observePalettes(): LiveData<List<Palette>>{
         return userPalettes
