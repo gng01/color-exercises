@@ -1,7 +1,10 @@
 package edu.utap.colorexercises.ui;
 
 import android.animation.PropertyValuesHolder;
-
+/*
+Copied from ArcLayout Demo:
+https://github.com/ogaclejapan/ArcLayout/tree/master/demo/src/main
+ */
 public class AnimatorUtils {
 
   public static final String ROTATION = "rotation";

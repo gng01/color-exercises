@@ -27,7 +27,7 @@ import kotlin.random.Random.Default.nextInt
  */
 class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
 
-    private val debug = true
+    private val debug = false
 
     val modesList = ExerciseModesRepository().fetchModesList()
     val buttonsRepository = ButtonsRepository()
@@ -355,9 +355,7 @@ class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
                 root.viewTreeObserver.addOnGlobalLayoutListener(
                     object : OnGlobalLayoutListener {
                         override fun onGlobalLayout() {
-                            // Layout has happened here.
                             showColors(arcLayout, mainColorButton)
-                            // Don't forget to remove your listener when you are done with it.
                             root.viewTreeObserver.removeOnGlobalLayoutListener(this)
                         }
                     })
