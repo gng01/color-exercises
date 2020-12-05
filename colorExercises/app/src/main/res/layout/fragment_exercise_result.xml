@@ -74,6 +74,13 @@
         app:layout_constraintTop_toBottomOf="@+id/result_pair"
         app:layout_constraintEnd_toEndOf="parent"
         android:id="@+id/exercise_result_control">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Long tap on a color circle to add the color to your palettes"
+            app:layout_constraintBottom_toTopOf="@id/btn_result_back"
+            android:padding="12dp"
+            android:textAlignment="center"></TextView>
         <Button
             android:background="@drawable/ic_baseline_navigate_before_50"
             android:backgroundTint="@color/colorPrimary"
