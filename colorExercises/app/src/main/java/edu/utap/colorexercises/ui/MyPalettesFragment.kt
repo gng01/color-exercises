@@ -44,11 +44,16 @@ class MyPalettesFragment : Fragment(R.layout.fragment_mypalettes) {
 
         initAddPaletteTrigger()
 
+        initLayout(hexColor)
     }
 
     override fun onStart() {
         super.onStart()
 
+    }
+
+    private fun initLayout(hexColor: String?) {
+        addColorInstructions.visibility = if (hexColor == null) View.GONE else View.VISIBLE
     }
 
     private fun initAddPaletteTrigger() {

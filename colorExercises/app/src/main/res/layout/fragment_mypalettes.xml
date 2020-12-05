@@ -18,13 +18,21 @@
         android:textAllCaps="true"
         android:textSize="30dp"
         app:layout_constraintTop_toTopOf="parent"></TextView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tap on a palette to add your selected color to it"
+        app:layout_constraintTop_toBottomOf="@id/palettesHeading"
+        android:padding="12dp"
+        android:id="@+id/addColorInstructions"
+        android:textAlignment="center"></TextView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/palette_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/addPaletteTrigger"
-        app:layout_constraintTop_toBottomOf="@id/palettesHeading" />
+        app:layout_constraintTop_toBottomOf="@id/addColorInstructions" />
 
     <Button
         android:layout_width="match_parent"
