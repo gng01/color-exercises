@@ -19,6 +19,30 @@ import edu.utap.colorexercises.model.Palette
 import kotlinx.android.synthetic.main.activity_edit_palette.*
 
 class EditPaletteActivity : AppCompatActivity() {
+    // there are a few places here that have this condition to decide if the Activity is for edit or view:
+    // if (isPaletteOwner())
+    // as you know, if the user is the palette owner, then he/she can edit; otherwise, its view only
+    // we could've used Inversion of Control here, where we have an interface called PaletteAccessible,
+    // and our classes that implement that interface could be PaletteViewer, PaletteEditor.
+    
+    // instead of this:
+    //   setContentView(if (isPaletteOwner()) R.layout.activity_edit_palette else R.layout.activity_view_palette)
+    // we could go:
+    //   setContentView(paletteAccessor.getLayout())
+
+    // instead of this:
+    //    if (isPaletteOwner()) {
+    //        findViewById<EditText>(R.id.name).setText(palette.name)
+    //
+    //        findViewById<EditText>(R.id.tags).setText(palette.keywords.joinToString())
+    //    } else {
+    //        findViewById<TextView>(R.id.name).setText(palette.name)
+    //
+    //        findViewById<TextView>(R.id.username).setText(palette.ownerUserName)
+    //    }
+    // we could go:
+    //   paletteAccessor.updateLayout(palette)
+
     private val viewModel: MainViewModel by viewModels()
     private var palette = Palette()
     private var colorData = HashMap<Int, String>()
