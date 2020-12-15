@@ -68,6 +68,11 @@ class ExerciseSet {
         val hue = ColorGenerator.hueForLevel(level, difficultLevel)
         val luminance = ColorGenerator.luminanceForLevel(level, difficultLevel)
 
+        // This is great structure, IMO.  You can add new sets here without modifying existing code.
+        // I know we discussed this early on, but I think it's great.
+        // What you did here was follow the Open-Close principle:
+        // open to extension--you can add more stuff;
+        // closed to modification--you don't need to change anything when you add more sets.
         return when(mode){
             "MATCHVALUE" -> newLuminanceSet(hue,incrementingSaturation)
             "MATCHHUE" ->newHueSet(luminance,decrementingSaturation)
