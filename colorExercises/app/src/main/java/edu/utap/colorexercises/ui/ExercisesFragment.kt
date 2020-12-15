@@ -27,7 +27,15 @@ import kotlin.random.Random.Default.nextInt
  * Set debug to true for fast progress through games
  */
 class ExercisesFragment : Fragment(R.layout.fragment_exercises) {
+    // regarding this entire class, you kept things here UI related, which is good.
+    // if you neeed to change the UI for the exercises, you know to do it here.
+    // if you need to change the Logic for the exercises, you know to do it elsewhere.
+    // the concept here is commonly referred to as the Single Responsibility principle.
 
+    // regarding the viewModel, I think for this project it worked out well.
+    // however, we probably should've had different viewModels between the exercises and the palettes.
+    // I chose to use the same one for the palettes.
+    // We could probably put the data access stuff outside the viewModel as well, so that all viewModels can use them.
     private val debug = false
 
     val modesList = ExerciseModesRepository().fetchModesList()
