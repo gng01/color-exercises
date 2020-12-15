@@ -42,6 +42,14 @@ class ColorJudge {
         }
 
         fun accuracy(firstColor: OneColor, secondColor: OneColor, criteria: (OneColor, OneColor)-> Double): Double {
+            // The concepts here are commonly referred to as Dependency Injection,
+            // and a related concept (which we've discussed) is Inversion of Control
+            // you plug in the criteria as if it's a cartridge, and it does its job.
+
+            // alternatively, you could have a separate class, like LuminanceJudgeable, ComplementaryJudgeable, etc,
+            // all of which implement an interface called Judgeable, with a criteria function that needs to be implemented.
+            // Then you'd have this ColorJudge do the judging on a Judgeable object.
+            // adding a class for these would be unnecessary.  Just wanted to show an alternative implementation.
             val value: Double = criteria(firstColor,secondColor)
             //Log.d("XXX OneColor: ", "value: $value")
             return (1-value)*100 //100 full score scale
